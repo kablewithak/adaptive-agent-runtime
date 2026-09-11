@@ -1,0 +1,51 @@
+{
+  "benchmark_families": {
+    "F1": "Straightforward access mismatch",
+    "F2": "Ambiguous request",
+    "F3": "Stale or superseded policy",
+    "F4": "Multi-record contradiction",
+    "F5": "Authorisation boundary",
+    "F6": "Interrupted workflow"
+  },
+  "deterministic_controls": {
+    "all_times": "explicit_utc",
+    "approval": "applicable_unexpired_action_approval_required_for_state_change",
+    "case_clock": "frozen_per_case",
+    "idempotency": "logical_operation_must_not_apply_twice",
+    "requester_authority": "requesting_contact_must_be_authorised_for_state_change",
+    "revision": "expected_current_revision_required",
+    "tenant_scope": "cross_tenant_state_change_forbidden"
+  },
+  "organisation": "HarbourDesk",
+  "plans": {
+    "business": [
+      "base_access",
+      "collaboration",
+      "exports",
+      "admin_controls"
+    ],
+    "starter": [
+      "base_access"
+    ],
+    "team": [
+      "base_access",
+      "collaboration",
+      "exports"
+    ]
+  },
+  "schema_version": "1.0",
+  "synthetic_only": true,
+  "terminal_reason_codes": [
+    "ENTITLEMENT_RECONCILED",
+    "ACCOUNT_OR_FEATURE_AMBIGUOUS",
+    "ACCOUNT_SELECTION_REQUIRED",
+    "FEATURE_NOT_INCLUDED_CURRENT_PLAN",
+    "CANCELLATION_SCHEDULED_UNDER_CURRENT_POLICY",
+    "RECORD_CONTRADICTION_RESOLVED",
+    "RECORD_OWNERSHIP_CONFLICT",
+    "REQUESTER_NOT_AUTHORISED",
+    "ACTION_APPROVAL_EXPIRED",
+    "PRIOR_OPERATION_ALREADY_COMMITTED",
+    "OPERATION_OUTCOME_UNCERTAIN"
+  ]
+}

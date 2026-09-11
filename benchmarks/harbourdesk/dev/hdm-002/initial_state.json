@@ -1,0 +1,79 @@
+{
+  "accounts": [
+    {
+      "account_id": "acct-002",
+      "authorised_contacts": [
+        "mira@northjetty.test"
+      ],
+      "subscription_id": "sub-002",
+      "tenant_id": "tenant-002"
+    }
+  ],
+  "approvals": [
+    {
+      "account_id": "acct-002",
+      "approval_id": "approval-002",
+      "expires_at": "2026-09-12T12:00:00Z",
+      "issued_at": "2026-09-10T12:00:00Z",
+      "issuer_type": "system",
+      "permitted_action": "reconcile_entitlement",
+      "tenant_id": "tenant-002"
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-002",
+      "enabled": false,
+      "feature_id": "admin_controls",
+      "revision": 4,
+      "source_subscription_revision": 2
+    }
+  ],
+  "frozen_at": "2026-09-11T12:00:00Z",
+  "operations": [],
+  "policies": [
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "Current access policy. Starter includes base_access. Team includes base_access, collaboration and exports. Business includes all Team features plus admin_controls. Entitlement reconciliation requires an authorised requester, an unexpired approval, the current subscription revision and idempotent execution.",
+      "content_hash": "bcb7aaa018b2c9d251ae6d7f7075d47084b2c2e0f30fb8920d2960acd48798c9",
+      "document_id": "policy-access-v2",
+      "valid_from": "2026-07-01T00:00:00Z",
+      "valid_to": null,
+      "version": 2
+    }
+  ],
+  "subscriptions": [
+    {
+      "account_id": "acct-002",
+      "cancellation_effective_at": null,
+      "end_at": null,
+      "plan_id": "business",
+      "revision": 3,
+      "start_at": "2026-01-01T00:00:00Z",
+      "status": "active",
+      "subscription_id": "sub-002"
+    }
+  ],
+  "tenants": [
+    {
+      "active": true,
+      "display_name": "North Jetty",
+      "tenant_id": "tenant-002"
+    }
+  ],
+  "tickets": [
+    {
+      "account_id": "acct-002",
+      "evidence_document_ids": [],
+      "initial_text": "I can manage users, but the admin controls panel is missing.",
+      "notes": [],
+      "operation_ids": [],
+      "requesting_contact": "mira@northjetty.test",
+      "resolution_reason_code": null,
+      "revision": 1,
+      "status": "open",
+      "tenant_id": "tenant-002",
+      "ticket_id": "ticket-002"
+    }
+  ]
+}
