@@ -1,0 +1,66 @@
+{
+  "account_governance": "partially_observable",
+  "checkpoint_date": "2026-09-11",
+  "deepseek_flash_continuation_incident": {
+    "documented_shape_intervention": "fail_http_400",
+    "initial_normalized_round_trip": "fail_http_400",
+    "initial_receipt_sha256": "25a0bc5e536e616799f495813db1ab37bdcef29ed68a27da954eff25408d013f",
+    "observed_assistant_message_keys": [
+      "content",
+      "reasoning_content",
+      "role",
+      "tool_calls"
+    ],
+    "post_repair_normalized_probe": "reported_pass",
+    "post_repair_receipt_sha256": null,
+    "raw_assistant_replay": "pass",
+    "repair": "preserve reasoning_content ephemerally and exclude it from ordinary serialization",
+    "root_cause": "provider continuation state lost at normalization boundary",
+    "second_receipt_sha256": "42aceba61692dffbb996bfb0a98ac33d2fc804beffd9fe06b134aaeddabc4f01",
+    "wire_diagnostic_receipt_sha256": "e7981b880668e6485cdc81d14043ae99c1d35bf84c8eab4bb87fa2399067681d"
+  },
+  "gate": "gate_0",
+  "model_catalog": {
+    "models": [
+      "deepseek-v4-flash",
+      "glm-5.1",
+      "glm-5.2",
+      "qwen3-32b",
+      "deepseek-v4-pro"
+    ],
+    "receipt_sha256": "53960ab83b09e7e828d1d6ea4f5be07b7d625eb253e00795c3fefe6a0a418208",
+    "status": "pass"
+  },
+  "non_claims": [
+    "comparative_model_quality",
+    "general_latency_superiority",
+    "pricing_or_currency_savings",
+    "exact_remaining_token_balance",
+    "grant_expiry",
+    "maximum_context_window",
+    "production_readiness"
+  ],
+  "protocol_qualified_models": [
+    "glm-5.1",
+    "glm-5.2",
+    "deepseek-v4-flash",
+    "deepseek-v4-pro"
+  ],
+  "schema_version": "1.0",
+  "technical_capability": "pass",
+  "unknowns": {
+    "context_envelope": null,
+    "grant_expiry": null,
+    "paid_fallback": null,
+    "remaining_token_balance": null,
+    "token_pool_scope": null
+  },
+  "unresolved_models": {
+    "qwen3-32b": {
+      "catalog_visible": true,
+      "classification": "model_specific_auth_or_entitlement_unresolved",
+      "inference_http_status": 401,
+      "receipt_sha256": "a873b4a2bd70c9af26ce7234d5ccdd2334ad1912e2e87a419f3edbc8ce847924"
+    }
+  }
+}

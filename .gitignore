@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environment
+.venv/
+
+# Local secrets and account configuration
+.env
+.env.*
+!.env.example
+configs/account.local.json
+
+# Runtime evidence
+runs/*
+!runs/.gitkeep
+
+# Private evaluation labels
+evaluation_private/*
+!evaluation_private/.gitkeep
+
+# Editor / OS
+.vscode/settings.local.json
+.DS_Store
+Thumbs.db
+
+# Frontend
+space/node_modules/
+space/dist/

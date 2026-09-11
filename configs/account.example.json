@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "provider": "huawei_maas",
+  "profiles": [
+    {
+      "profile_name": "",
+      "protocol": "openai_compatible",
+      "full_endpoint_url": "",
+      "region_label": "",
+      "model_id": "",
+      "observed_at": "",
+      "max_tested_prompt_tokens": null,
+      "max_tested_completion_tokens": null,
+      "thinking_control": null,
+      "usage_mapping_version": null,
+      "rpm_operating_limit": null,
+      "tpm_operating_limit": null,
+      "capability_receipt_sha256": null
+    }
+  ]
+}
