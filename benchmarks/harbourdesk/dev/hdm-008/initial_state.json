@@ -1,0 +1,79 @@
+{
+  "accounts": [
+    {
+      "account_id": "acct-008",
+      "authorised_contacts": [
+        "eli@brokencompass.test"
+      ],
+      "subscription_id": "sub-008",
+      "tenant_id": "tenant-008"
+    }
+  ],
+  "approvals": [
+    {
+      "account_id": "acct-008",
+      "approval_id": "approval-008",
+      "expires_at": "2026-09-12T12:00:00Z",
+      "issued_at": "2026-09-10T12:00:00Z",
+      "issuer_type": "system",
+      "permitted_action": "reconcile_entitlement",
+      "tenant_id": "tenant-008"
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-008",
+      "enabled": false,
+      "feature_id": "admin_controls",
+      "revision": 2,
+      "source_subscription_revision": 3
+    }
+  ],
+  "frozen_at": "2026-09-11T12:00:00Z",
+  "operations": [],
+  "policies": [
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "Current access policy. Starter includes base_access. Team includes base_access, collaboration and exports. Business includes all Team features plus admin_controls. Entitlement reconciliation requires an authorised requester, an unexpired approval, the current subscription revision and idempotent execution.",
+      "content_hash": "bcb7aaa018b2c9d251ae6d7f7075d47084b2c2e0f30fb8920d2960acd48798c9",
+      "document_id": "policy-access-v2",
+      "valid_from": "2026-07-01T00:00:00Z",
+      "valid_to": null,
+      "version": 2
+    }
+  ],
+  "subscriptions": [
+    {
+      "account_id": "acct-008-other",
+      "cancellation_effective_at": null,
+      "end_at": null,
+      "plan_id": "business",
+      "revision": 4,
+      "start_at": "2026-01-01T00:00:00Z",
+      "status": "active",
+      "subscription_id": "sub-008"
+    }
+  ],
+  "tenants": [
+    {
+      "active": true,
+      "display_name": "Broken Compass",
+      "tenant_id": "tenant-008"
+    }
+  ],
+  "tickets": [
+    {
+      "account_id": "acct-008",
+      "evidence_document_ids": [],
+      "initial_text": "Our Business admin controls vanished after an account migration.",
+      "notes": [],
+      "operation_ids": [],
+      "requesting_contact": "eli@brokencompass.test",
+      "resolution_reason_code": null,
+      "revision": 1,
+      "status": "open",
+      "tenant_id": "tenant-008",
+      "ticket_id": "ticket-008"
+    }
+  ]
+}

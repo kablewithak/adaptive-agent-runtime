@@ -1,0 +1,8 @@
+{
+  "documents_file": "documents.jsonl",
+  "frozen_at": "2026-09-11T12:00:00Z",
+  "initial_state_file": "initial_state.json",
+  "schema_version": "1.0",
+  "task_ref": "task-007",
+  "ticket_id": "ticket-007"
+}

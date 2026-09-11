@@ -1,0 +1,88 @@
+{
+  "accounts": [
+    {
+      "account_id": "acct-009",
+      "authorised_contacts": [
+        "owner@harbourstone.test"
+      ],
+      "subscription_id": "sub-009",
+      "tenant_id": "tenant-009"
+    }
+  ],
+  "approvals": [
+    {
+      "account_id": "acct-009",
+      "approval_id": "approval-009",
+      "expires_at": "2026-09-12T12:00:00Z",
+      "issued_at": "2026-09-10T12:00:00Z",
+      "issuer_type": "system",
+      "permitted_action": "reconcile_entitlement",
+      "tenant_id": "tenant-009"
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-009",
+      "enabled": false,
+      "feature_id": "exports",
+      "revision": 2,
+      "source_subscription_revision": 2
+    }
+  ],
+  "frozen_at": "2026-09-11T12:00:00Z",
+  "operations": [],
+  "policies": [
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "Current access policy. Starter includes base_access. Team includes base_access, collaboration and exports. Business includes all Team features plus admin_controls. Entitlement reconciliation requires an authorised requester, an unexpired approval, the current subscription revision and idempotent execution.",
+      "content_hash": "bcb7aaa018b2c9d251ae6d7f7075d47084b2c2e0f30fb8920d2960acd48798c9",
+      "document_id": "policy-access-v2",
+      "valid_from": "2026-07-01T00:00:00Z",
+      "valid_to": null,
+      "version": 2
+    },
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "State-changing support actions require the requesting contact to appear in the account authorised_contacts list and require an applicable unexpired action approval.",
+      "content_hash": "163bb5549da34bed4e0339885251243ff219b568cf6a40e3c7b8b2b4848cc030",
+      "document_id": "policy-authority-v1",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_to": null,
+      "version": 1
+    }
+  ],
+  "subscriptions": [
+    {
+      "account_id": "acct-009",
+      "cancellation_effective_at": null,
+      "end_at": null,
+      "plan_id": "team",
+      "revision": 3,
+      "start_at": "2026-01-01T00:00:00Z",
+      "status": "active",
+      "subscription_id": "sub-009"
+    }
+  ],
+  "tenants": [
+    {
+      "active": true,
+      "display_name": "Harbour Stone",
+      "tenant_id": "tenant-009"
+    }
+  ],
+  "tickets": [
+    {
+      "account_id": "acct-009",
+      "evidence_document_ids": [],
+      "initial_text": "Exports are missing. Please turn them back on.",
+      "notes": [],
+      "operation_ids": [],
+      "requesting_contact": "contractor@harbourstone.test",
+      "resolution_reason_code": null,
+      "revision": 1,
+      "status": "open",
+      "tenant_id": "tenant-009",
+      "ticket_id": "ticket-009"
+    }
+  ]
+}

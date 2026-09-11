@@ -1,0 +1,103 @@
+{
+  "accounts": [
+    {
+      "account_id": "acct-012",
+      "authorised_contacts": [
+        "zoe@fogsignal.test"
+      ],
+      "subscription_id": "sub-012",
+      "tenant_id": "tenant-012"
+    }
+  ],
+  "approvals": [
+    {
+      "account_id": "acct-012",
+      "approval_id": "approval-012",
+      "expires_at": "2026-09-12T12:00:00Z",
+      "issued_at": "2026-09-10T12:00:00Z",
+      "issuer_type": "system",
+      "permitted_action": "reconcile_entitlement",
+      "tenant_id": "tenant-012"
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-012",
+      "enabled": false,
+      "feature_id": "exports",
+      "revision": 5,
+      "source_subscription_revision": 5
+    }
+  ],
+  "frozen_at": "2026-09-11T12:00:00Z",
+  "operations": [
+    {
+      "account_id": "acct-012",
+      "action": "reconcile_entitlement",
+      "after_revision": null,
+      "arguments_hash": "1545fcae6ea97a9aaef15349ebbd4acb202709138b24d005c2e5392de6dba7d0",
+      "before_revision": null,
+      "effective_write": false,
+      "idempotency_key": "idem-case-012-prior",
+      "operation_id": "op-012-prior",
+      "status": "unknown",
+      "tenant_id": "tenant-012"
+    }
+  ],
+  "policies": [
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "Current access policy. Starter includes base_access. Team includes base_access, collaboration and exports. Business includes all Team features plus admin_controls. Entitlement reconciliation requires an authorised requester, an unexpired approval, the current subscription revision and idempotent execution.",
+      "content_hash": "bcb7aaa018b2c9d251ae6d7f7075d47084b2c2e0f30fb8920d2960acd48798c9",
+      "document_id": "policy-access-v2",
+      "valid_from": "2026-07-01T00:00:00Z",
+      "valid_to": null,
+      "version": 2
+    },
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "When a prior operation acknowledgement is missing, support must inspect the operation record before retrying. A committed operation must not be repeated. An unknown outcome must be escalated rather than duplicated.",
+      "content_hash": "cb957db5b2886ddc704569692cb17a43c7891e756244f54c62c7a3737ffaceed",
+      "document_id": "policy-ops-v1",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_to": null,
+      "version": 1
+    }
+  ],
+  "subscriptions": [
+    {
+      "account_id": "acct-012",
+      "cancellation_effective_at": null,
+      "end_at": null,
+      "plan_id": "team",
+      "revision": 6,
+      "start_at": "2026-01-01T00:00:00Z",
+      "status": "active",
+      "subscription_id": "sub-012"
+    }
+  ],
+  "tenants": [
+    {
+      "active": true,
+      "display_name": "Fog Signal",
+      "tenant_id": "tenant-012"
+    }
+  ],
+  "tickets": [
+    {
+      "account_id": "acct-012",
+      "evidence_document_ids": [],
+      "initial_text": "Exports are still unavailable. The last fix lost its response, so please try it again.",
+      "notes": [
+        "Prior operation outcome could not be confirmed."
+      ],
+      "operation_ids": [],
+      "requesting_contact": "zoe@fogsignal.test",
+      "resolution_reason_code": null,
+      "revision": 1,
+      "status": "open",
+      "tenant_id": "tenant-012",
+      "ticket_id": "ticket-012"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "accounts": [
+    {
+      "account_id": "acct-005",
+      "authorised_contacts": [
+        "ravi@oldquay.test"
+      ],
+      "subscription_id": "sub-005",
+      "tenant_id": "tenant-005"
+    }
+  ],
+  "approvals": [
+    {
+      "account_id": "acct-005",
+      "approval_id": "approval-005",
+      "expires_at": "2026-09-12T12:00:00Z",
+      "issued_at": "2026-09-10T12:00:00Z",
+      "issuer_type": "system",
+      "permitted_action": "reconcile_entitlement",
+      "tenant_id": "tenant-005"
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-005",
+      "enabled": false,
+      "feature_id": "admin_controls",
+      "revision": 3,
+      "source_subscription_revision": 7
+    }
+  ],
+  "frozen_at": "2026-09-11T12:00:00Z",
+  "operations": [],
+  "policies": [
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "Superseded access note. Team subscriptions include base_access, collaboration, exports and admin_controls.",
+      "content_hash": "18f4013fc216d7908c73fd88c8cd0196f731993b9f7431b36e69a399d7a59e80",
+      "document_id": "policy-access-v1",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_to": "2026-07-01T00:00:00Z",
+      "version": 1
+    },
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "Current access policy. Starter includes base_access. Team includes base_access, collaboration and exports. Business includes all Team features plus admin_controls. Entitlement reconciliation requires an authorised requester, an unexpired approval, the current subscription revision and idempotent execution.",
+      "content_hash": "bcb7aaa018b2c9d251ae6d7f7075d47084b2c2e0f30fb8920d2960acd48798c9",
+      "document_id": "policy-access-v2",
+      "valid_from": "2026-07-01T00:00:00Z",
+      "valid_to": null,
+      "version": 2
+    }
+  ],
+  "subscriptions": [
+    {
+      "account_id": "acct-005",
+      "cancellation_effective_at": null,
+      "end_at": null,
+      "plan_id": "team",
+      "revision": 7,
+      "start_at": "2026-01-01T00:00:00Z",
+      "status": "active",
+      "subscription_id": "sub-005"
+    }
+  ],
+  "tenants": [
+    {
+      "active": true,
+      "display_name": "Old Quay",
+      "tenant_id": "tenant-005"
+    }
+  ],
+  "tickets": [
+    {
+      "account_id": "acct-005",
+      "evidence_document_ids": [],
+      "initial_text": "Our notes say Team includes admin controls, but the panel is missing.",
+      "notes": [
+        "Copied note: Team includes admin controls."
+      ],
+      "operation_ids": [],
+      "requesting_contact": "ravi@oldquay.test",
+      "resolution_reason_code": null,
+      "revision": 1,
+      "status": "open",
+      "tenant_id": "tenant-005",
+      "ticket_id": "ticket-005"
+    }
+  ]
+}

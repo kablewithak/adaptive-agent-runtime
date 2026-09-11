@@ -1,0 +1,115 @@
+{
+  "accounts": [
+    {
+      "account_id": "acct-004a",
+      "authorised_contacts": [
+        "sam@twinpiers.test"
+      ],
+      "subscription_id": "sub-004a",
+      "tenant_id": "tenant-004"
+    },
+    {
+      "account_id": "acct-004b",
+      "authorised_contacts": [
+        "sam@twinpiers.test"
+      ],
+      "subscription_id": "sub-004b",
+      "tenant_id": "tenant-004"
+    }
+  ],
+  "approvals": [
+    {
+      "account_id": "acct-004a",
+      "approval_id": "approval-004a",
+      "expires_at": "2026-09-12T12:00:00Z",
+      "issued_at": "2026-09-10T12:00:00Z",
+      "issuer_type": "system",
+      "permitted_action": "schedule_cancellation",
+      "tenant_id": "tenant-004"
+    },
+    {
+      "account_id": "acct-004b",
+      "approval_id": "approval-004b",
+      "expires_at": "2026-09-12T12:00:00Z",
+      "issued_at": "2026-09-10T12:00:00Z",
+      "issuer_type": "system",
+      "permitted_action": "schedule_cancellation",
+      "tenant_id": "tenant-004"
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-004a",
+      "enabled": true,
+      "feature_id": "exports",
+      "revision": 2,
+      "source_subscription_revision": 2
+    },
+    {
+      "account_id": "acct-004b",
+      "enabled": true,
+      "feature_id": "exports",
+      "revision": 6,
+      "source_subscription_revision": 6
+    }
+  ],
+  "frozen_at": "2026-09-11T12:00:00Z",
+  "operations": [],
+  "policies": [
+    {
+      "authority": "HarbourDesk Operations",
+      "body": "Current cancellation policy. When the requester asks for the earliest permitted cancellation, the effective date is seven full days after the frozen case time. The requester must be authorised and an unexpired schedule_cancellation approval must exist.",
+      "content_hash": "66e3f6f214f492081af66e6b1bec757e95b6b0be9b9655c6fccc78b347eef788",
+      "document_id": "policy-cancel-v2",
+      "valid_from": "2026-08-01T00:00:00Z",
+      "valid_to": null,
+      "version": 2
+    }
+  ],
+  "subscriptions": [
+    {
+      "account_id": "acct-004a",
+      "cancellation_effective_at": null,
+      "end_at": null,
+      "plan_id": "team",
+      "revision": 2,
+      "start_at": "2026-01-01T00:00:00Z",
+      "status": "active",
+      "subscription_id": "sub-004a"
+    },
+    {
+      "account_id": "acct-004b",
+      "cancellation_effective_at": null,
+      "end_at": null,
+      "plan_id": "team",
+      "revision": 6,
+      "start_at": "2026-01-01T00:00:00Z",
+      "status": "active",
+      "subscription_id": "sub-004b"
+    }
+  ],
+  "tenants": [
+    {
+      "active": true,
+      "display_name": "Twin Piers",
+      "tenant_id": "tenant-004"
+    }
+  ],
+  "tickets": [
+    {
+      "account_id": "acct-004a",
+      "evidence_document_ids": [],
+      "initial_text": "Please cancel our workspace as soon as you can.",
+      "notes": [
+        "Requester administers both North Dock and South Dock accounts."
+      ],
+      "operation_ids": [],
+      "requesting_contact": "sam@twinpiers.test",
+      "resolution_reason_code": null,
+      "revision": 1,
+      "status": "open",
+      "tenant_id": "tenant-004",
+      "ticket_id": "ticket-004"
+    }
+  ]
+}
