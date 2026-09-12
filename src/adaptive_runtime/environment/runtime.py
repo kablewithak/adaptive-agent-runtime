@@ -6,6 +6,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from adaptive_runtime.environment.business_rules import HarbourDeskBusinessRules
 from adaptive_runtime.environment.domain import HarbourDeskVisibleState
+from adaptive_runtime.environment.model_observation import (
+    ModelVisibleInitialObservation,
+    build_initial_model_observation,
+)
 from adaptive_runtime.environment.read_tools import (
     ReadToolName,
     ReadToolResult,
@@ -88,6 +92,14 @@ class HarbourDeskEnvironment:
             idempotency_key=call.idempotency_key,
             tool=call.tool,
             arguments=call.arguments,
+        )
+
+    def initial_observation(self) -> ModelVisibleInitialObservation:
+        """Return the frozen model-visible projection for the current task scope."""
+        return build_initial_model_observation(
+            state=self._store.snapshot(),
+            tenant_id=self._tenant_id,
+            ticket_id=self._ticket_id,
         )
 
     def snapshot(self) -> HarbourDeskVisibleState:
