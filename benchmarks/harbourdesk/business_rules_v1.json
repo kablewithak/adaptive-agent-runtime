@@ -7,6 +7,9 @@
     "F5": "Authorisation boundary",
     "F6": "Interrupted workflow"
   },
+  "cancellation": {
+    "minimum_notice_days": 7
+  },
   "deterministic_controls": {
     "all_times": "explicit_utc",
     "approval": "applicable_unexpired_action_approval_required_for_state_change",

@@ -40,6 +40,7 @@ class TicketStatus(StrEnum):
 class ApprovalAction(StrEnum):
     RECONCILE_ENTITLEMENT = "reconcile_entitlement"
     SCHEDULE_CANCELLATION = "schedule_cancellation"
+    UPDATE_TICKET = "update_ticket"
 
 
 class ApprovalIssuerType(StrEnum):
