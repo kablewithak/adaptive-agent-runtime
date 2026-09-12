@@ -1,0 +1,34 @@
+{
+  "case_id": "hdm-008",
+  "steps": [
+    {
+      "arguments": {
+        "ticket_id": "ticket-008"
+      },
+      "call_id": "hdm-008-read-01",
+      "tool": "get_ticket"
+    },
+    {
+      "arguments": {
+        "account_id": "acct-008"
+      },
+      "call_id": "hdm-008-read-02",
+      "tool": "get_account"
+    },
+    {
+      "arguments": {
+        "subscription_id": "sub-008"
+      },
+      "call_id": "hdm-008-read-03",
+      "tool": "get_subscription"
+    },
+    {
+      "arguments": {
+        "account_id": "acct-008"
+      },
+      "call_id": "hdm-008-read-04",
+      "tool": "get_entitlements"
+    }
+  ],
+  "tenant_id": "tenant-008"
+}

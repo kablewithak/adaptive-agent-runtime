@@ -1,0 +1,41 @@
+{
+  "case_id": "hdm-007",
+  "steps": [
+    {
+      "arguments": {
+        "ticket_id": "ticket-007"
+      },
+      "call_id": "hdm-007-read-01",
+      "tool": "get_ticket"
+    },
+    {
+      "arguments": {
+        "account_id": "acct-007"
+      },
+      "call_id": "hdm-007-read-02",
+      "tool": "get_account"
+    },
+    {
+      "arguments": {
+        "subscription_id": "sub-007"
+      },
+      "call_id": "hdm-007-read-03",
+      "tool": "get_subscription"
+    },
+    {
+      "arguments": {
+        "account_id": "acct-007"
+      },
+      "call_id": "hdm-007-read-04",
+      "tool": "get_entitlements"
+    },
+    {
+      "arguments": {
+        "document_id": "policy-access-v2"
+      },
+      "call_id": "hdm-007-read-05",
+      "tool": "read_policy"
+    }
+  ],
+  "tenant_id": "tenant-007"
+}
