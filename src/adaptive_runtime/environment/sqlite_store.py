@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from adaptive_runtime.environment.domain import (
     Account,
     Approval,
+    ApprovalAction,
     Entitlement,
     HarbourDeskVisibleState,
     OperationRecord,
@@ -46,8 +47,16 @@ class StoreError(RuntimeError):
     """Raised when the local HarbourDesk state store cannot be used safely."""
 
 
+class StoreRevisionConflict(StoreError):
+    """Raised when a compare-and-swap mutation observes a stale revision."""
+
+
+class StoreIdempotencyConflict(StoreError):
+    """Raised when a concurrent write reuses an idempotency key."""
+
+
 class HarbourDeskStore:
-    """SQLite-backed case store with read-only runtime-facing methods."""
+    """SQLite-backed case store with scoped reads and atomic mutation primitives."""
 
     def __init__(self, connection: sqlite3.Connection) -> None:
         self._connection = connection
@@ -114,6 +123,7 @@ class HarbourDeskStore:
                 ordinal INTEGER NOT NULL,
                 subscription_id TEXT PRIMARY KEY,
                 account_id TEXT NOT NULL,
+                revision INTEGER NOT NULL,
                 payload_json TEXT NOT NULL
             );
 
@@ -121,6 +131,7 @@ class HarbourDeskStore:
                 ordinal INTEGER NOT NULL,
                 account_id TEXT NOT NULL,
                 feature_id TEXT NOT NULL,
+                revision INTEGER NOT NULL,
                 payload_json TEXT NOT NULL,
                 PRIMARY KEY (account_id, feature_id)
             );
@@ -130,6 +141,7 @@ class HarbourDeskStore:
                 ticket_id TEXT PRIMARY KEY,
                 tenant_id TEXT NOT NULL,
                 account_id TEXT NOT NULL,
+                revision INTEGER NOT NULL,
                 payload_json TEXT NOT NULL
             );
 
@@ -157,7 +169,12 @@ class HarbourDeskStore:
                 operation_id TEXT PRIMARY KEY,
                 tenant_id TEXT NOT NULL,
                 account_id TEXT NOT NULL,
-                payload_json TEXT NOT NULL
+                action TEXT NOT NULL,
+                idempotency_key TEXT NOT NULL,
+                arguments_hash TEXT NOT NULL,
+                status TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                UNIQUE (tenant_id, action, idempotency_key)
             );
             """
         )
@@ -202,9 +219,6 @@ class HarbourDeskStore:
         return None if payload is None else Account.model_validate_json(payload)
 
     def get_subscription(self, tenant_id: str, subscription_id: str) -> Subscription | None:
-        # Scope by the subscription reference held by an account in the current tenant.
-        # This deliberately still exposes an internally contradictory subscription.account_id
-        # so F4 ownership-conflict cases remain diagnosable rather than disappearing as 404s.
         payload = self._fetch_payload(
             """
             SELECT s.payload_json
@@ -253,6 +267,17 @@ class HarbourDeskStore:
         ).fetchall()
         return tuple(rows)
 
+    def get_approval(self, tenant_id: str, approval_id: str) -> Approval | None:
+        payload = self._fetch_payload(
+            """
+            SELECT payload_json
+            FROM approvals
+            WHERE tenant_id = ? AND approval_id = ?
+            """,
+            (tenant_id, approval_id),
+        )
+        return None if payload is None else Approval.model_validate_json(payload)
+
     def get_operation(self, tenant_id: str, operation_id: str) -> OperationRecord | None:
         payload = self._fetch_payload(
             """
@@ -263,6 +288,112 @@ class HarbourDeskStore:
             (tenant_id, operation_id),
         )
         return None if payload is None else OperationRecord.model_validate_json(payload)
+
+    def get_operation_by_idempotency(
+        self,
+        tenant_id: str,
+        action: ApprovalAction,
+        idempotency_key: str,
+    ) -> OperationRecord | None:
+        payload = self._fetch_payload(
+            """
+            SELECT payload_json
+            FROM operations
+            WHERE tenant_id = ? AND action = ? AND idempotency_key = ?
+            """,
+            (tenant_id, action.value, idempotency_key),
+        )
+        return None if payload is None else OperationRecord.model_validate_json(payload)
+
+    def replace_entitlement_with_operation(
+        self,
+        updated: Entitlement,
+        expected_revision: int,
+        operation: OperationRecord,
+    ) -> None:
+        try:
+            with self._connection:
+                cursor = self._connection.execute(
+                    """
+                    UPDATE entitlements
+                    SET revision = ?, payload_json = ?
+                    WHERE account_id = ? AND feature_id = ? AND revision = ?
+                    """,
+                    (
+                        updated.revision,
+                        updated.model_dump_json(),
+                        updated.account_id,
+                        updated.feature_id,
+                        expected_revision,
+                    ),
+                )
+                if cursor.rowcount != 1:
+                    raise StoreRevisionConflict("entitlement revision changed")
+                self._append_operation(operation)
+        except sqlite3.IntegrityError as exc:
+            raise StoreIdempotencyConflict("operation idempotency key already exists") from exc
+
+    def replace_subscription_with_operation(
+        self,
+        updated: Subscription,
+        expected_revision: int,
+        operation: OperationRecord,
+    ) -> None:
+        try:
+            with self._connection:
+                cursor = self._connection.execute(
+                    """
+                    UPDATE subscriptions
+                    SET revision = ?, payload_json = ?
+                    WHERE subscription_id = ? AND revision = ?
+                    """,
+                    (
+                        updated.revision,
+                        updated.model_dump_json(),
+                        updated.subscription_id,
+                        expected_revision,
+                    ),
+                )
+                if cursor.rowcount != 1:
+                    raise StoreRevisionConflict("subscription revision changed")
+                self._append_operation(operation)
+        except sqlite3.IntegrityError as exc:
+            raise StoreIdempotencyConflict("operation idempotency key already exists") from exc
+
+    def replace_ticket_with_operation(
+        self,
+        updated: Ticket,
+        expected_revision: int,
+        operation: OperationRecord,
+    ) -> None:
+        try:
+            with self._connection:
+                cursor = self._connection.execute(
+                    """
+                    UPDATE tickets
+                    SET revision = ?, payload_json = ?
+                    WHERE ticket_id = ? AND tenant_id = ? AND revision = ?
+                    """,
+                    (
+                        updated.revision,
+                        updated.model_dump_json(),
+                        updated.ticket_id,
+                        updated.tenant_id,
+                        expected_revision,
+                    ),
+                )
+                if cursor.rowcount != 1:
+                    raise StoreRevisionConflict("ticket revision changed")
+                self._append_operation(operation)
+        except sqlite3.IntegrityError as exc:
+            raise StoreIdempotencyConflict("operation idempotency key already exists") from exc
+
+    def append_noop_operation(self, operation: OperationRecord) -> None:
+        try:
+            with self._connection:
+                self._append_operation(operation)
+        except sqlite3.IntegrityError as exc:
+            raise StoreIdempotencyConflict("operation idempotency key already exists") from exc
 
     def snapshot(self) -> HarbourDeskVisibleState:
         from datetime import datetime
@@ -283,10 +414,7 @@ class HarbourDeskStore:
     def _insert_tenants(self, records: tuple[Tenant, ...]) -> None:
         for ordinal, record in enumerate(records):
             self._connection.execute(
-                """
-                INSERT INTO tenants(ordinal, tenant_id, payload_json)
-                VALUES (?, ?, ?)
-                """,
+                "INSERT INTO tenants(ordinal, tenant_id, payload_json) VALUES (?, ?, ?)",
                 (ordinal, record.tenant_id, record.model_dump_json()),
             )
 
@@ -311,13 +439,15 @@ class HarbourDeskStore:
         for ordinal, record in enumerate(records):
             self._connection.execute(
                 """
-                INSERT INTO subscriptions(ordinal, subscription_id, account_id, payload_json)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO subscriptions(
+                    ordinal, subscription_id, account_id, revision, payload_json
+                ) VALUES (?, ?, ?, ?, ?)
                 """,
                 (
                     ordinal,
                     record.subscription_id,
                     record.account_id,
+                    record.revision,
                     record.model_dump_json(),
                 ),
             )
@@ -326,13 +456,15 @@ class HarbourDeskStore:
         for ordinal, record in enumerate(records):
             self._connection.execute(
                 """
-                INSERT INTO entitlements(ordinal, account_id, feature_id, payload_json)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO entitlements(
+                    ordinal, account_id, feature_id, revision, payload_json
+                ) VALUES (?, ?, ?, ?, ?)
                 """,
                 (
                     ordinal,
                     record.account_id,
                     record.feature_id,
+                    record.revision,
                     record.model_dump_json(),
                 ),
             )
@@ -341,14 +473,16 @@ class HarbourDeskStore:
         for ordinal, record in enumerate(records):
             self._connection.execute(
                 """
-                INSERT INTO tickets(ordinal, ticket_id, tenant_id, account_id, payload_json)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO tickets(
+                    ordinal, ticket_id, tenant_id, account_id, revision, payload_json
+                ) VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
                     ordinal,
                     record.ticket_id,
                     record.tenant_id,
                     record.account_id,
+                    record.revision,
                     record.model_dump_json(),
                 ),
             )
@@ -378,8 +512,9 @@ class HarbourDeskStore:
         for ordinal, record in enumerate(records):
             self._connection.execute(
                 """
-                INSERT INTO approvals(ordinal, approval_id, tenant_id, account_id, payload_json)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO approvals(
+                    ordinal, approval_id, tenant_id, account_id, payload_json
+                ) VALUES (?, ?, ?, ?, ?)
                 """,
                 (
                     ordinal,
@@ -395,17 +530,47 @@ class HarbourDeskStore:
             self._connection.execute(
                 """
                 INSERT INTO operations(
-                    ordinal, operation_id, tenant_id, account_id, payload_json
-                ) VALUES (?, ?, ?, ?, ?)
+                    ordinal, operation_id, tenant_id, account_id, action,
+                    idempotency_key, arguments_hash, status, payload_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     ordinal,
                     record.operation_id,
                     record.tenant_id,
                     record.account_id,
+                    record.action.value,
+                    record.idempotency_key,
+                    record.arguments_hash,
+                    record.status.value,
                     record.model_dump_json(),
                 ),
             )
+
+    def _append_operation(self, record: OperationRecord) -> None:
+        row = self._connection.execute(
+            "SELECT COALESCE(MAX(ordinal), -1) + 1 AS next_ordinal FROM operations"
+        ).fetchone()
+        next_ordinal = int(row["next_ordinal"])
+        self._connection.execute(
+            """
+            INSERT INTO operations(
+                ordinal, operation_id, tenant_id, account_id, action,
+                idempotency_key, arguments_hash, status, payload_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                next_ordinal,
+                record.operation_id,
+                record.tenant_id,
+                record.account_id,
+                record.action.value,
+                record.idempotency_key,
+                record.arguments_hash,
+                record.status.value,
+                record.model_dump_json(),
+            ),
+        )
 
     def _fetch_payload(self, sql: str, parameters: tuple[str, ...]) -> str | None:
         row = self._connection.execute(sql, parameters).fetchone()

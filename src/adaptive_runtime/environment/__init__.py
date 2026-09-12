@@ -1,3 +1,7 @@
+from adaptive_runtime.environment.business_rules import (
+    CancellationRules,
+    HarbourDeskBusinessRules,
+)
 from adaptive_runtime.environment.domain import (
     Account,
     Approval,
@@ -13,6 +17,11 @@ from adaptive_runtime.environment.domain import (
     Tenant,
     Ticket,
     TicketStatus,
+)
+from adaptive_runtime.environment.mutation_rehearsal import (
+    MutationRehearsalSummary,
+    MutationScenarioResult,
+    run_manual_mutation_rehearsal,
 )
 from adaptive_runtime.environment.read_rehearsal import (
     CaseReadRehearsalResult,
@@ -33,17 +42,40 @@ from adaptive_runtime.environment.scripted import (
     ScriptedReadTrajectory,
     run_scripted_reads,
 )
-from adaptive_runtime.environment.sqlite_store import HarbourDeskStore, StoreError
+from adaptive_runtime.environment.sqlite_store import (
+    HarbourDeskStore,
+    StoreError,
+    StoreIdempotencyConflict,
+    StoreRevisionConflict,
+)
+from adaptive_runtime.environment.write_tools import (
+    EntitlementWriteObservation,
+    ReconcileEntitlementArgs,
+    ScheduleCancellationArgs,
+    SubscriptionWriteObservation,
+    TicketWriteObservation,
+    UpdateTicketArgs,
+    WriteToolErrorCode,
+    WriteToolName,
+    WriteToolResult,
+    WriteToolStatus,
+    execute_write_tool,
+)
 
 __all__ = [
     "Account",
     "Approval",
     "ApprovalAction",
     "ApprovalIssuerType",
+    "CancellationRules",
     "CaseReadRehearsalResult",
     "Entitlement",
+    "EntitlementWriteObservation",
+    "HarbourDeskBusinessRules",
     "HarbourDeskStore",
     "HarbourDeskVisibleState",
+    "MutationRehearsalSummary",
+    "MutationScenarioResult",
     "OperationRecord",
     "OperationStatus",
     "PolicyDocument",
@@ -52,17 +84,30 @@ __all__ = [
     "ReadToolName",
     "ReadToolResult",
     "ReadToolStatus",
+    "ReconcileEntitlementArgs",
     "RehearsalStatus",
+    "ScheduleCancellationArgs",
     "ScriptedReadStep",
     "ScriptedReadTrace",
     "ScriptedReadTrajectory",
     "StoreError",
+    "StoreIdempotencyConflict",
+    "StoreRevisionConflict",
     "Subscription",
     "SubscriptionStatus",
+    "SubscriptionWriteObservation",
     "Tenant",
     "Ticket",
     "TicketStatus",
+    "TicketWriteObservation",
+    "UpdateTicketArgs",
+    "WriteToolErrorCode",
+    "WriteToolName",
+    "WriteToolResult",
+    "WriteToolStatus",
     "execute_read_tool",
+    "execute_write_tool",
+    "run_manual_mutation_rehearsal",
     "run_manual_read_rehearsal",
     "run_scripted_reads",
 ]
