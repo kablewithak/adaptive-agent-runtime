@@ -1,0 +1,78 @@
+{
+  "case_id": "hdm-008",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-008"
+        },
+        "call_id": "hdm-008-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-008"
+        },
+        "call_id": "hdm-008-account",
+        "kind": "read",
+        "tool": "get_account"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "subscription_id": "sub-008"
+        },
+        "call_id": "hdm-008-subscription",
+        "kind": "read",
+        "tool": "get_subscription"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-008",
+          "approval_id": "approval-008",
+          "expected_entitlement_revision": 2,
+          "expected_subscription_revision": 4,
+          "feature_id": "admin_controls"
+        },
+        "call_id": "hdm-008-reconcile",
+        "idempotency_key": "p15-hdm-008-reconcile",
+        "kind": "write",
+        "tool": "reconcile_entitlement"
+      },
+      "expected_error_code": "ownership_conflict",
+      "expected_status": "error"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [],
+          "expected_ticket_revision": 1,
+          "operation_ids": [],
+          "resolution_reason_code": "RECORD_OWNERSHIP_CONFLICT",
+          "status": "escalated",
+          "ticket_id": "ticket-008"
+        },
+        "call_id": "hdm-008-update-ticket",
+        "idempotency_key": "p15-hdm-008-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-008",
+  "ticket_id": "ticket-008"
+}

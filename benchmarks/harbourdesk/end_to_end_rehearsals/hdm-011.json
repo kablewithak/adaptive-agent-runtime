@@ -1,0 +1,65 @@
+{
+  "case_id": "hdm-011",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-011"
+        },
+        "call_id": "hdm-011-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "operation_id": "op-011-prior"
+        },
+        "call_id": "hdm-011-operation",
+        "kind": "read",
+        "tool": "get_operation"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "document_id": "policy-ops-v1"
+        },
+        "call_id": "hdm-011-policy",
+        "kind": "read",
+        "tool": "read_policy"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [
+            "policy-ops-v1"
+          ],
+          "expected_ticket_revision": 1,
+          "operation_ids": [
+            "op-011-prior"
+          ],
+          "resolution_reason_code": "PRIOR_OPERATION_ALREADY_COMMITTED",
+          "status": "resolved",
+          "ticket_id": "ticket-011"
+        },
+        "call_id": "hdm-011-update-ticket",
+        "idempotency_key": "p15-hdm-011-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-011",
+  "ticket_id": "ticket-011"
+}

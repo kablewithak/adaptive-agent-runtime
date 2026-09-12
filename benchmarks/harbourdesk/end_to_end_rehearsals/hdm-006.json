@@ -1,0 +1,81 @@
+{
+  "case_id": "hdm-006",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-006"
+        },
+        "call_id": "hdm-006-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "max_results": 5,
+          "query": "cancellation notice"
+        },
+        "call_id": "hdm-006-policy-search",
+        "kind": "read",
+        "tool": "search_policies"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "document_id": "policy-cancel-v2"
+        },
+        "call_id": "hdm-006-policy-current",
+        "kind": "read",
+        "tool": "read_policy"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-006",
+          "approval_id": "approval-006",
+          "effective_at": "2026-09-18T12:00:00Z",
+          "expected_subscription_revision": 9,
+          "subscription_id": "sub-006"
+        },
+        "call_id": "hdm-006-cancel",
+        "idempotency_key": "p15-hdm-006-cancel",
+        "kind": "write",
+        "tool": "schedule_cancellation"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [
+            "policy-cancel-v2"
+          ],
+          "expected_ticket_revision": 1,
+          "operation_ids": [],
+          "resolution_reason_code": "CANCELLATION_SCHEDULED_UNDER_CURRENT_POLICY",
+          "status": "resolved",
+          "ticket_id": "ticket-006"
+        },
+        "call_id": "hdm-006-update-ticket",
+        "idempotency_key": "p15-hdm-006-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-006",
+  "ticket_id": "ticket-006"
+}
