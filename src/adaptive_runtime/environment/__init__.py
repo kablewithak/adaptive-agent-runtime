@@ -14,20 +14,55 @@ from adaptive_runtime.environment.domain import (
     Ticket,
     TicketStatus,
 )
+from adaptive_runtime.environment.read_rehearsal import (
+    CaseReadRehearsalResult,
+    ReadRehearsalSummary,
+    RehearsalStatus,
+    run_manual_read_rehearsal,
+)
+from adaptive_runtime.environment.read_tools import (
+    ReadToolErrorCode,
+    ReadToolName,
+    ReadToolResult,
+    ReadToolStatus,
+    execute_read_tool,
+)
+from adaptive_runtime.environment.scripted import (
+    ScriptedReadStep,
+    ScriptedReadTrace,
+    ScriptedReadTrajectory,
+    run_scripted_reads,
+)
+from adaptive_runtime.environment.sqlite_store import HarbourDeskStore, StoreError
 
 __all__ = [
     "Account",
     "Approval",
     "ApprovalAction",
     "ApprovalIssuerType",
+    "CaseReadRehearsalResult",
     "Entitlement",
+    "HarbourDeskStore",
     "HarbourDeskVisibleState",
     "OperationRecord",
     "OperationStatus",
     "PolicyDocument",
+    "ReadRehearsalSummary",
+    "ReadToolErrorCode",
+    "ReadToolName",
+    "ReadToolResult",
+    "ReadToolStatus",
+    "RehearsalStatus",
+    "ScriptedReadStep",
+    "ScriptedReadTrace",
+    "ScriptedReadTrajectory",
+    "StoreError",
     "Subscription",
     "SubscriptionStatus",
     "Tenant",
     "Ticket",
     "TicketStatus",
+    "execute_read_tool",
+    "run_manual_read_rehearsal",
+    "run_scripted_reads",
 ]
