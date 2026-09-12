@@ -1,0 +1,82 @@
+{
+  "case_id": "hdm-012",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-012"
+        },
+        "call_id": "hdm-012-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "operation_id": "op-012-prior"
+        },
+        "call_id": "hdm-012-operation",
+        "kind": "read",
+        "tool": "get_operation"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "document_id": "policy-ops-v1"
+        },
+        "call_id": "hdm-012-policy",
+        "kind": "read",
+        "tool": "read_policy"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-012",
+          "approval_id": "approval-012",
+          "expected_entitlement_revision": 5,
+          "expected_subscription_revision": 6,
+          "feature_id": "exports"
+        },
+        "call_id": "hdm-012-retry",
+        "idempotency_key": "idem-case-012-prior",
+        "kind": "write",
+        "tool": "reconcile_entitlement"
+      },
+      "expected_error_code": "operation_outcome_unknown",
+      "expected_status": "error"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [
+            "policy-ops-v1"
+          ],
+          "expected_ticket_revision": 1,
+          "operation_ids": [
+            "op-012-prior"
+          ],
+          "resolution_reason_code": "OPERATION_OUTCOME_UNCERTAIN",
+          "status": "escalated",
+          "ticket_id": "ticket-012"
+        },
+        "call_id": "hdm-012-update-ticket",
+        "idempotency_key": "p15-hdm-012-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-012",
+  "ticket_id": "ticket-012"
+}

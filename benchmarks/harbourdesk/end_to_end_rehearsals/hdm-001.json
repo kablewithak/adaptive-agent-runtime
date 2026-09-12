@@ -1,0 +1,104 @@
+{
+  "case_id": "hdm-001",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-001"
+        },
+        "call_id": "hdm-001-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-001"
+        },
+        "call_id": "hdm-001-account",
+        "kind": "read",
+        "tool": "get_account"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "subscription_id": "sub-001"
+        },
+        "call_id": "hdm-001-subscription",
+        "kind": "read",
+        "tool": "get_subscription"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-001"
+        },
+        "call_id": "hdm-001-entitlements",
+        "kind": "read",
+        "tool": "get_entitlements"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "document_id": "policy-access-v2"
+        },
+        "call_id": "hdm-001-policy",
+        "kind": "read",
+        "tool": "read_policy"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-001",
+          "approval_id": "approval-001",
+          "expected_entitlement_revision": 7,
+          "expected_subscription_revision": 5,
+          "feature_id": "exports"
+        },
+        "call_id": "hdm-001-reconcile",
+        "idempotency_key": "p15-hdm-001-reconcile",
+        "kind": "write",
+        "tool": "reconcile_entitlement"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [
+            "policy-access-v2"
+          ],
+          "expected_ticket_revision": 1,
+          "operation_ids": [],
+          "resolution_reason_code": "ENTITLEMENT_RECONCILED",
+          "status": "resolved",
+          "ticket_id": "ticket-001"
+        },
+        "call_id": "hdm-001-update-ticket",
+        "idempotency_key": "p15-hdm-001-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-001",
+  "ticket_id": "ticket-001"
+}

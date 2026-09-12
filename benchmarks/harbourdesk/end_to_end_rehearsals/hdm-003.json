@@ -1,0 +1,49 @@
+{
+  "case_id": "hdm-003",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-003"
+        },
+        "call_id": "hdm-003-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-003"
+        },
+        "call_id": "hdm-003-entitlements",
+        "kind": "read",
+        "tool": "get_entitlements"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [],
+          "expected_ticket_revision": 1,
+          "operation_ids": [],
+          "resolution_reason_code": "ACCOUNT_OR_FEATURE_AMBIGUOUS",
+          "status": "pending_clarification",
+          "ticket_id": "ticket-003"
+        },
+        "call_id": "hdm-003-update-ticket",
+        "idempotency_key": "p15-hdm-003-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-003",
+  "ticket_id": "ticket-003"
+}

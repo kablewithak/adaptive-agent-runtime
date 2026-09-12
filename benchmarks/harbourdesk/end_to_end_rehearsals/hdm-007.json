@@ -1,0 +1,92 @@
+{
+  "case_id": "hdm-007",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-007"
+        },
+        "call_id": "hdm-007-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "subscription_id": "sub-007"
+        },
+        "call_id": "hdm-007-subscription",
+        "kind": "read",
+        "tool": "get_subscription"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-007"
+        },
+        "call_id": "hdm-007-entitlements",
+        "kind": "read",
+        "tool": "get_entitlements"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "document_id": "policy-access-v2"
+        },
+        "call_id": "hdm-007-policy",
+        "kind": "read",
+        "tool": "read_policy"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "account_id": "acct-007",
+          "approval_id": "approval-007",
+          "expected_entitlement_revision": 5,
+          "expected_subscription_revision": 8,
+          "feature_id": "exports"
+        },
+        "call_id": "hdm-007-reconcile",
+        "idempotency_key": "p15-hdm-007-reconcile",
+        "kind": "write",
+        "tool": "reconcile_entitlement"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [
+            "policy-access-v2"
+          ],
+          "expected_ticket_revision": 1,
+          "operation_ids": [],
+          "resolution_reason_code": "RECORD_CONTRADICTION_RESOLVED",
+          "status": "resolved",
+          "ticket_id": "ticket-007"
+        },
+        "call_id": "hdm-007-update-ticket",
+        "idempotency_key": "p15-hdm-007-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-007",
+  "ticket_id": "ticket-007"
+}

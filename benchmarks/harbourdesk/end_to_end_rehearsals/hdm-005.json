@@ -1,0 +1,64 @@
+{
+  "case_id": "hdm-005",
+  "steps": [
+    {
+      "call": {
+        "arguments": {
+          "ticket_id": "ticket-005"
+        },
+        "call_id": "hdm-005-ticket",
+        "kind": "read",
+        "tool": "get_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "max_results": 5,
+          "query": "Team admin controls"
+        },
+        "call_id": "hdm-005-policy-search",
+        "kind": "read",
+        "tool": "search_policies"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "document_id": "policy-access-v2"
+        },
+        "call_id": "hdm-005-policy-current",
+        "kind": "read",
+        "tool": "read_policy"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    },
+    {
+      "call": {
+        "arguments": {
+          "evidence_document_ids": [
+            "policy-access-v2"
+          ],
+          "expected_ticket_revision": 1,
+          "operation_ids": [],
+          "resolution_reason_code": "FEATURE_NOT_INCLUDED_CURRENT_PLAN",
+          "status": "resolved",
+          "ticket_id": "ticket-005"
+        },
+        "call_id": "hdm-005-update-ticket",
+        "idempotency_key": "p15-hdm-005-ticket",
+        "kind": "write",
+        "tool": "update_ticket"
+      },
+      "expected_error_code": null,
+      "expected_status": "ok"
+    }
+  ],
+  "tenant_id": "tenant-005",
+  "ticket_id": "ticket-005"
+}
