@@ -287,6 +287,19 @@ def _reconcile_entitlement(
             ),
         )
 
+    if _has_unknown_operation_in_scope(
+        store,
+        tenant_id,
+        account.account_id,
+        ApprovalAction.RECONCILE_ENTITLEMENT,
+    ):
+        return _error(
+            call_id,
+            tool,
+            WriteToolErrorCode.OPERATION_OUTCOME_UNKNOWN,
+            _prior_message(WriteToolErrorCode.OPERATION_OUTCOME_UNKNOWN),
+        )
+
     if subscription.revision != args.expected_subscription_revision:
         return _error(
             call_id,
@@ -745,6 +758,21 @@ def _approval_message(code: WriteToolErrorCode) -> str:
         WriteToolErrorCode.APPROVAL_EXPIRED: "approval is not valid at the frozen case time",
     }
     return messages[code]
+
+
+def _has_unknown_operation_in_scope(
+    store: HarbourDeskStore,
+    tenant_id: str,
+    account_id: str,
+    action: ApprovalAction,
+) -> bool:
+    return any(
+        operation.tenant_id == tenant_id
+        and operation.account_id == account_id
+        and operation.action is action
+        and operation.status is OperationStatus.UNKNOWN
+        for operation in store.snapshot().operations
+    )
 
 
 def _prior_operation_result(
