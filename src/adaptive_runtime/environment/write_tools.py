@@ -17,6 +17,7 @@ from adaptive_runtime.environment.domain import (
     Subscription,
     SubscriptionStatus,
     Ticket,
+    TicketResolutionReasonCode,
     TicketStatus,
 )
 from adaptive_runtime.environment.sqlite_store import (
@@ -90,11 +91,7 @@ class UpdateTicketArgs(WriteContract):
     ticket_id: str = Field(min_length=1, max_length=100)
     expected_ticket_revision: int = Field(ge=1)
     status: TicketStatus
-    resolution_reason_code: str | None = Field(
-        default=None,
-        min_length=1,
-        max_length=100,
-    )
+    resolution_reason_code: TicketResolutionReasonCode | None = None
     evidence_document_ids: tuple[str, ...] = ()
     operation_ids: tuple[str, ...] = ()
 
@@ -182,6 +179,7 @@ def execute_write_tool(
             ticket_args = UpdateTicketArgs.model_validate(arguments)
             return _update_ticket(
                 store,
+                rules,
                 tenant_id,
                 ticket_id,
                 call_id,
@@ -578,6 +576,7 @@ def _schedule_cancellation(
 
 def _update_ticket(
     store: HarbourDeskStore,
+    rules: HarbourDeskBusinessRules,
     tenant_id: str,
     ticket_id: str,
     call_id: str,
@@ -596,6 +595,16 @@ def _update_ticket(
     ticket = store.get_ticket(tenant_id, ticket_id)
     if ticket is None:
         return _error(call_id, tool, WriteToolErrorCode.NOT_FOUND, "ticket not found")
+
+    if args.resolution_reason_code is not None and not rules.allows_terminal_reason(
+        args.resolution_reason_code
+    ):
+        return _error(
+            call_id,
+            tool,
+            WriteToolErrorCode.INVALID_ARGUMENTS,
+            "resolution reason code is not enabled by the active business rules",
+        )
 
     arguments_hash = _arguments_hash(tool, tenant_id, ticket_id, args)
     prior = _prior_operation_result(

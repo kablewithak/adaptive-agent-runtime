@@ -37,6 +37,20 @@ class TicketStatus(StrEnum):
     RESOLVED = "resolved"
 
 
+class TicketResolutionReasonCode(StrEnum):
+    ENTITLEMENT_RECONCILED = "ENTITLEMENT_RECONCILED"
+    ACCOUNT_OR_FEATURE_AMBIGUOUS = "ACCOUNT_OR_FEATURE_AMBIGUOUS"
+    ACCOUNT_SELECTION_REQUIRED = "ACCOUNT_SELECTION_REQUIRED"
+    FEATURE_NOT_INCLUDED_CURRENT_PLAN = "FEATURE_NOT_INCLUDED_CURRENT_PLAN"
+    CANCELLATION_SCHEDULED_UNDER_CURRENT_POLICY = "CANCELLATION_SCHEDULED_UNDER_CURRENT_POLICY"
+    RECORD_CONTRADICTION_RESOLVED = "RECORD_CONTRADICTION_RESOLVED"
+    RECORD_OWNERSHIP_CONFLICT = "RECORD_OWNERSHIP_CONFLICT"
+    REQUESTER_NOT_AUTHORISED = "REQUESTER_NOT_AUTHORISED"
+    ACTION_APPROVAL_EXPIRED = "ACTION_APPROVAL_EXPIRED"
+    PRIOR_OPERATION_ALREADY_COMMITTED = "PRIOR_OPERATION_ALREADY_COMMITTED"
+    OPERATION_OUTCOME_UNCERTAIN = "OPERATION_OUTCOME_UNCERTAIN"
+
+
 class ApprovalAction(StrEnum):
     RECONCILE_ENTITLEMENT = "reconcile_entitlement"
     SCHEDULE_CANCELLATION = "schedule_cancellation"
@@ -120,11 +134,7 @@ class Ticket(DomainContract):
     notes: tuple[str, ...] = ()
     status: TicketStatus
     revision: int = Field(ge=1)
-    resolution_reason_code: str | None = Field(
-        default=None,
-        min_length=1,
-        max_length=100,
-    )
+    resolution_reason_code: TicketResolutionReasonCode | None = None
     evidence_document_ids: tuple[str, ...] = ()
     operation_ids: tuple[str, ...] = ()
 

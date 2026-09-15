@@ -5,6 +5,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from adaptive_runtime.environment.domain import TicketResolutionReasonCode
+
 
 class RuleContract(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True, str_strip_whitespace=True)
@@ -20,7 +22,7 @@ class HarbourDeskBusinessRules(RuleContract):
     synthetic_only: bool
     plans: dict[str, tuple[str, ...]]
     deterministic_controls: dict[str, str]
-    terminal_reason_codes: tuple[str, ...]
+    terminal_reason_codes: tuple[TicketResolutionReasonCode, ...] = Field(min_length=1)
     benchmark_families: dict[str, str]
     cancellation: CancellationRules
 
@@ -32,6 +34,12 @@ class HarbourDeskBusinessRules(RuleContract):
         if plan_id not in self.plans:
             raise KeyError(plan_id)
         return feature_id in self.plans[plan_id]
+
+    def allows_terminal_reason(
+        self,
+        reason_code: TicketResolutionReasonCode,
+    ) -> bool:
+        return reason_code in self.terminal_reason_codes
 
     def minimum_cancellation_effective_at(self, frozen_at: datetime) -> datetime:
         return frozen_at + timedelta(days=self.cancellation.minimum_notice_days)
