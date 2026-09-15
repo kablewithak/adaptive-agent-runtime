@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+from importlib import import_module
+from typing import Any
+
 from adaptive_runtime.environment.business_rules import (
     CancellationRules,
     HarbourDeskBusinessRules,
@@ -25,15 +30,6 @@ from adaptive_runtime.environment.end_to_end import (
     ScriptedEnvironmentTrajectory,
     load_trajectory_json,
     run_scripted_environment,
-)
-from adaptive_runtime.environment.end_to_end_rehearsal import (
-    EndToEndCaseResult,
-    EndToEndRehearsalError,
-    EndToEndRehearsalStatus,
-    EndToEndRehearsalSummary,
-    PrivateEvaluationDataMissing,
-    run_end_to_end_case,
-    run_manual_end_to_end_rehearsal,
 )
 from adaptive_runtime.environment.mutation_rehearsal import (
     MutationRehearsalSummary,
@@ -85,6 +81,54 @@ from adaptive_runtime.environment.write_tools import (
     WriteToolStatus,
     execute_write_tool,
 )
+
+_LAZY_EXPORTS = {
+    "EndToEndCaseResult": (
+        "adaptive_runtime.environment.end_to_end_rehearsal",
+        "EndToEndCaseResult",
+    ),
+    "EndToEndRehearsalError": (
+        "adaptive_runtime.environment.end_to_end_rehearsal",
+        "EndToEndRehearsalError",
+    ),
+    "EndToEndRehearsalStatus": (
+        "adaptive_runtime.environment.end_to_end_rehearsal",
+        "EndToEndRehearsalStatus",
+    ),
+    "EndToEndRehearsalSummary": (
+        "adaptive_runtime.environment.end_to_end_rehearsal",
+        "EndToEndRehearsalSummary",
+    ),
+    "PrivateEvaluationDataMissing": (
+        "adaptive_runtime.environment.end_to_end_rehearsal",
+        "PrivateEvaluationDataMissing",
+    ),
+    "run_end_to_end_case": (
+        "adaptive_runtime.environment.end_to_end_rehearsal",
+        "run_end_to_end_case",
+    ),
+    "run_manual_end_to_end_rehearsal": (
+        "adaptive_runtime.environment.end_to_end_rehearsal",
+        "run_manual_end_to_end_rehearsal",
+    ),
+}
+
+
+def __getattr__(name: str) -> Any:
+    target = _LAZY_EXPORTS.get(name)
+    if target is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+    module_name, attribute_name = target
+    module = import_module(module_name)
+    value = getattr(module, attribute_name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(_LAZY_EXPORTS))
+
 
 __all__ = [
     "Account",
