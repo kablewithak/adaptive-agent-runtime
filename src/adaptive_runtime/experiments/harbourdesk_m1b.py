@@ -37,11 +37,11 @@ M1B_MAX_COMPLETION_TOKENS = 768
 
 
 class M1BError(RuntimeError):
-    """Raised when the frozen M1B baseline cannot be produced safely."""
+    """Raised when a frozen fixed-model baseline cannot be produced safely."""
 
 
 class M1BPrivateEvaluationMissing(M1BError):
-    """Raised before live traffic when one or more evaluator labels are unavailable."""
+    """Raised before live traffic when evaluator-only labels are unavailable."""
 
 
 class M1BExperimentStatus(StrEnum):
@@ -50,6 +50,29 @@ class M1BExperimentStatus(StrEnum):
 
 class M1BContract(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True, str_strip_whitespace=True)
+
+
+class FixedBaselineIdentity(M1BContract):
+    stage_label: str = Field(min_length=1, max_length=20)
+    profile_name: str = Field(min_length=1, max_length=100)
+    model_id: str = Field(min_length=1, max_length=100)
+    frozen_configuration_schema_version: str = Field(min_length=1, max_length=100)
+    manifest_schema_version: str = Field(min_length=1, max_length=100)
+    case_receipt_schema_version: str = Field(min_length=1, max_length=100)
+    experiment_receipt_schema_version: str = Field(min_length=1, max_length=100)
+    model_profile_version: str = Field(min_length=1, max_length=100)
+
+
+M1B_IDENTITY = FixedBaselineIdentity(
+    stage_label="M1B",
+    profile_name=M1B_PROFILE_NAME,
+    model_id=M1B_MODEL_ID,
+    frozen_configuration_schema_version="m1b-glm51-baseline-v1",
+    manifest_schema_version="m1b-manifest-v1",
+    case_receipt_schema_version="m1b-case-v1",
+    experiment_receipt_schema_version="m1b-v1",
+    model_profile_version="m1b-glm51-baseline-v1",
+)
 
 
 class _PublicCaseManifest(M1BContract):
@@ -145,11 +168,25 @@ class M1BExperimentReceipt(M1BContract):
 
 
 def load_m1b_public_cases(repo_root: Path) -> tuple[M1BPublicCase, ...]:
+    return load_fixed_baseline_public_cases(repo_root)
+
+
+def load_fixed_baseline_public_cases(
+    repo_root: Path,
+) -> tuple[M1BPublicCase, ...]:
     return tuple(_load_public_case(repo_root, case_id) for case_id in M1B_CASE_IDS)
 
 
 def load_m1b_inputs(repo_root: Path) -> tuple[M1BCaseInput, ...]:
-    cases = load_m1b_public_cases(repo_root)
+    return load_fixed_baseline_inputs(repo_root, stage_label="M1B")
+
+
+def load_fixed_baseline_inputs(
+    repo_root: Path,
+    *,
+    stage_label: str,
+) -> tuple[M1BCaseInput, ...]:
+    cases = load_fixed_baseline_public_cases(repo_root)
     inputs: list[M1BCaseInput] = []
     missing: list[Path] = []
 
@@ -175,12 +212,12 @@ def load_m1b_inputs(repo_root: Path) -> tuple[M1BCaseInput, ...]:
     if missing:
         rendered = "\n".join(str(path) for path in missing)
         raise M1BPrivateEvaluationMissing(
-            "M1B requires all 12 evaluator-only expected.json files before live traffic:\n"
-            f"{rendered}"
+            f"{stage_label} requires all 12 evaluator-only expected.json files "
+            f"before live traffic:\n{rendered}"
         )
 
     result = tuple(inputs)
-    _validate_inputs(result)
+    _validate_inputs(result, stage_label=stage_label)
     return result
 
 
@@ -192,12 +229,32 @@ def run_m1b_experiment(
     run_id: str,
     evidence_dir: Path,
 ) -> M1BExperimentReceipt:
-    _validate_profile(profile)
-    _validate_inputs(inputs)
-    _prepare_evidence_dir(evidence_dir)
+    return run_fixed_model_baseline_experiment(
+        inputs=inputs,
+        provider=provider,
+        profile=profile,
+        run_id=run_id,
+        evidence_dir=evidence_dir,
+        identity=M1B_IDENTITY,
+    )
 
-    frozen = _frozen_configuration(profile)
+
+def run_fixed_model_baseline_experiment(
+    *,
+    inputs: tuple[M1BCaseInput, ...],
+    provider: ProviderAdapter,
+    profile: EndpointProfile,
+    run_id: str,
+    evidence_dir: Path,
+    identity: FixedBaselineIdentity,
+) -> M1BExperimentReceipt:
+    _validate_profile(profile, identity)
+    _validate_inputs(inputs, stage_label=identity.stage_label)
+    _prepare_evidence_dir(evidence_dir, stage_label=identity.stage_label)
+
+    frozen = _frozen_configuration(profile, identity)
     manifest = M1BSuiteManifest(
+        schema_version=identity.manifest_schema_version,
         run_id=run_id,
         frozen_configuration=frozen,
     )
@@ -213,6 +270,7 @@ def run_m1b_experiment(
             profile=profile,
             suite_run_id=run_id,
             trace_path=case_dir / "trace.jsonl",
+            identity=identity,
         )
         _write_json(case_dir / "receipt.json", receipt)
         receipts.append(receipt)
@@ -221,6 +279,7 @@ def run_m1b_experiment(
         run_id=run_id,
         frozen=frozen,
         cases=tuple(receipts),
+        identity=identity,
     )
     _write_json(evidence_dir / "summary.json", suite)
     return suite
@@ -254,15 +313,24 @@ def _load_public_case(repo_root: Path, case_id: str) -> M1BPublicCase:
     )
 
 
-def _validate_profile(profile: EndpointProfile) -> None:
-    if profile.profile_name != M1B_PROFILE_NAME:
+def _validate_profile(
+    profile: EndpointProfile,
+    identity: FixedBaselineIdentity,
+) -> None:
+    if profile.profile_name != identity.profile_name:
         raise M1BError(
-            f"M1B is frozen to profile {M1B_PROFILE_NAME}; selected {profile.profile_name}"
+            f"{identity.stage_label} is frozen to profile {identity.profile_name}; "
+            f"selected {profile.profile_name}"
         )
     if profile.protocol is not ProviderProtocol.OPENAI_COMPATIBLE:
-        raise M1BError("M1B requires the qualified OpenAI-compatible Huawei profile")
-    if profile.model_id != M1B_MODEL_ID:
-        raise M1BError(f"M1B is frozen to {M1B_MODEL_ID}; selected profile uses {profile.model_id}")
+        raise M1BError(
+            f"{identity.stage_label} requires the qualified OpenAI-compatible Huawei profile"
+        )
+    if profile.model_id != identity.model_id:
+        raise M1BError(
+            f"{identity.stage_label} is frozen to {identity.model_id}; "
+            f"selected profile uses {profile.model_id}"
+        )
 
 
 def _validate_expected(case: M1BPublicCase, expected: ExpectedCaseOutcome) -> None:
@@ -272,23 +340,33 @@ def _validate_expected(case: M1BPublicCase, expected: ExpectedCaseOutcome) -> No
         raise M1BError("evaluator terminal ticket differs from the public case ticket")
 
 
-def _validate_inputs(inputs: tuple[M1BCaseInput, ...]) -> None:
+def _validate_inputs(
+    inputs: tuple[M1BCaseInput, ...],
+    *,
+    stage_label: str,
+) -> None:
     case_order = tuple(item.case.case_id for item in inputs)
     if case_order != M1B_CASE_IDS:
-        raise M1BError("M1B requires the frozen 12-case order hdm-001 through hdm-012 exactly once")
+        raise M1BError(
+            f"{stage_label} requires the frozen 12-case order hdm-001 through hdm-012 exactly once"
+        )
 
     for item in inputs:
         _validate_expected(item.case, item.expected)
 
 
-def _prepare_evidence_dir(path: Path) -> None:
+def _prepare_evidence_dir(path: Path, *, stage_label: str) -> None:
     if path.exists():
-        raise FileExistsError(f"M1B evidence directory already exists: {path}")
+        raise FileExistsError(f"{stage_label} evidence directory already exists: {path}")
     path.mkdir(parents=True, exist_ok=False)
 
 
-def _frozen_configuration(profile: EndpointProfile) -> M1BFrozenConfiguration:
+def _frozen_configuration(
+    profile: EndpointProfile,
+    identity: FixedBaselineIdentity,
+) -> M1BFrozenConfiguration:
     return M1BFrozenConfiguration(
+        schema_version=identity.frozen_configuration_schema_version,
         profile_name=profile.profile_name,
         model_id=profile.model_id,
         protocol=profile.protocol,
@@ -302,12 +380,15 @@ def _frozen_configuration(profile: EndpointProfile) -> M1BFrozenConfiguration:
     )
 
 
-def _model_profile(profile: EndpointProfile) -> LiveModelProfile:
+def _model_profile(
+    profile: EndpointProfile,
+    identity: FixedBaselineIdentity,
+) -> LiveModelProfile:
     return LiveModelProfile(
         model_id=profile.model_id,
         protocol=profile.protocol,
         thinking=profile.thinking_control,
-        profile_version="m1b-glm51-baseline-v1",
+        profile_version=identity.model_profile_version,
     )
 
 
@@ -328,6 +409,7 @@ def _run_case(
     profile: EndpointProfile,
     suite_run_id: str,
     trace_path: Path,
+    identity: FixedBaselineIdentity,
 ) -> M1BCaseReceipt:
     case = item.case
     case_run_id = f"{suite_run_id}-{case.case_id}"
@@ -344,7 +426,7 @@ def _run_case(
             provider=provider,
             environment=environment,
             run_id=case_run_id,
-            model_profile=_model_profile(profile),
+            model_profile=_model_profile(profile, identity),
             budget=_budget(),
             trace_sink=JsonlTraceSink(trace_path),
         )
@@ -354,6 +436,7 @@ def _run_case(
     provider_latency_ms = sum(attempt.latency_ms or 0 for attempt in run.trace.attempts)
 
     return M1BCaseReceipt(
+        schema_version=identity.case_receipt_schema_version,
         case_id=case.case_id,
         task_ref=case.task_ref,
         ticket_id=case.ticket_id,
@@ -432,6 +515,7 @@ def _suite_receipt(
     run_id: str,
     frozen: M1BFrozenConfiguration,
     cases: tuple[M1BCaseReceipt, ...],
+    identity: FixedBaselineIdentity,
 ) -> M1BExperimentReceipt:
     score_pass_count = sum(1 for case in cases if case.score_passed)
     case_count = len(cases)
@@ -452,6 +536,7 @@ def _suite_receipt(
     failure_counts = Counter(failure for case in cases for failure in case.scoring_failures)
 
     return M1BExperimentReceipt(
+        schema_version=identity.experiment_receipt_schema_version,
         status=M1BExperimentStatus.COMPLETE,
         baseline_complete=case_count == len(M1B_CASE_IDS),
         run_id=run_id,
