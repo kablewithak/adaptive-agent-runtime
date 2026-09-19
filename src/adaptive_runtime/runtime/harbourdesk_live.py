@@ -47,6 +47,12 @@ from adaptive_runtime.environment.write_tools import (
     WriteToolName,
 )
 from adaptive_runtime.providers.base import ProviderAdapter, ProviderCallError
+from adaptive_runtime.runtime.multi_tool_contract import (
+    M3A_REALIZABLE_READ_TOOL_NAMES,
+    MultiToolBatchPreflight,
+    MultiToolBatchRejectionReason,
+    PreparedMultiToolRead,
+)
 from adaptive_runtime.runtime.trace import NullTraceSink, TraceEvent, TraceSink
 
 
@@ -175,6 +181,17 @@ class ToolActionFinishedTraceEvent(TraceEvent):
     recorded_at: datetime
     run_id: str
     action: ToolActionTrace
+
+
+class MultiToolBatchPreflightTraceEvent(TraceEvent):
+    event: Literal["multi_tool_batch_preflight"] = "multi_tool_batch_preflight"
+    recorded_at: datetime
+    run_id: str
+    attempt_index: int = Field(ge=1)
+    provider_tool_call_ids: tuple[str, ...]
+    tool_names: tuple[str, ...]
+    accepted: bool
+    rejection_reason: MultiToolBatchRejectionReason | None = None
 
 
 class RunFinishedTraceEvent(TraceEvent):
@@ -376,9 +393,65 @@ def run_live_harbourdesk(
         if not model_result.tool_calls:
             stop_category = LiveStopCategory.MODEL_TEXT_WITHOUT_TERMINAL
             break
-        if len(model_result.tool_calls) != 1:
-            stop_category = LiveStopCategory.MULTI_TOOL_CALL
-            break
+
+        if len(model_result.tool_calls) > 1:
+            preflight = _preflight_multi_read_batch(
+                provider_calls=model_result.tool_calls,
+                ticket_id=environment.ticket_id,
+                realized_action_count=len(tool_actions),
+                budget=current_budget,
+            )
+            sink.record(
+                MultiToolBatchPreflightTraceEvent(
+                    recorded_at=datetime.now(UTC),
+                    run_id=validated_run_id,
+                    attempt_index=attempt_index,
+                    provider_tool_call_ids=tuple(
+                        call.id for call in model_result.tool_calls
+                    ),
+                    tool_names=tuple(
+                        call.function.name for call in model_result.tool_calls
+                    ),
+                    accepted=preflight.accepted,
+                    rejection_reason=preflight.rejection_reason,
+                )
+            )
+            if not preflight.accepted:
+                stop_category = LiveStopCategory.MULTI_TOOL_CALL
+                break
+
+            for prepared_read in preflight.prepared_reads:
+                if _trajectory_deadline_exceeded(started_monotonic, current_budget):
+                    stop_category = LiveStopCategory.TRAJECTORY_DEADLINE_EXCEEDED
+                    break
+
+                action_index = len(tool_actions) + 1
+                read_environment_call = ReadEnvironmentCall(
+                    call_id=f"{validated_run_id}-tool-{action_index:02d}",
+                    tool=prepared_read.tool,
+                    arguments=dict(prepared_read.arguments),
+                )
+                action_trace, tool_message = _realize_environment_call(
+                    environment=environment,
+                    environment_call=read_environment_call,
+                    provider_tool_call_id=prepared_read.provider_tool_call_id,
+                    provider_tool_name=prepared_read.tool.value,
+                    action_index=action_index,
+                )
+                tool_actions.append(action_trace)
+                sink.record(
+                    ToolActionFinishedTraceEvent(
+                        recorded_at=datetime.now(UTC),
+                        run_id=validated_run_id,
+                        action=action_trace,
+                    )
+                )
+                messages.append(tool_message)
+
+            if stop_category is not None:
+                break
+            continue
+
         if len(tool_actions) >= current_budget.max_tool_actions:
             stop_category = LiveStopCategory.TOOL_ACTION_BUDGET_EXHAUSTED
             break
@@ -395,17 +468,13 @@ def run_live_harbourdesk(
             stop_category = LiveStopCategory.INVALID_TOOL_CALL
             break
 
-        observed = environment.execute(environment_call)
-        observed_payload = observed.model_dump(mode="json", exclude_none=True)
-        action_trace = ToolActionTrace(
-            action_index=len(tool_actions) + 1,
+        action_index = len(tool_actions) + 1
+        action_trace, tool_message = _realize_environment_call(
+            environment=environment,
+            environment_call=environment_call,
             provider_tool_call_id=provider_tool_call.id,
-            environment_call_id=observed.call_id,
-            tool=observed.tool.value,
-            arguments=dict(environment_call.arguments),
-            status=observed.status.value,
-            error_code=(None if observed.error_code is None else observed.error_code.value),
-            result=observed_payload,
+            provider_tool_name=provider_tool_call.function.name,
+            action_index=action_index,
         )
         tool_actions.append(action_trace)
         sink.record(
@@ -415,14 +484,7 @@ def run_live_harbourdesk(
                 action=action_trace,
             )
         )
-        messages.append(
-            ChatMessage(
-                role=ChatRole.TOOL,
-                tool_call_id=provider_tool_call.id,
-                name=provider_tool_call.function.name,
-                content=json.dumps(observed_payload, sort_keys=True, separators=(",", ":")),
-            )
-        )
+        messages.append(tool_message)
 
         if _current_ticket_status(environment) is not TicketStatus.OPEN:
             stop_category = LiveStopCategory.TICKET_TERMINAL
@@ -456,6 +518,144 @@ def run_live_harbourdesk(
         final_state_sha256=final_state_sha256,
     )
     return LiveRunResult(trace=trace, final_state=final_state)
+
+
+def _preflight_multi_read_batch(
+    *,
+    provider_calls: tuple[ToolCall, ...],
+    ticket_id: str,
+    realized_action_count: int,
+    budget: LiveRunBudget,
+) -> MultiToolBatchPreflight:
+    remaining_action_budget = budget.max_tool_actions - realized_action_count
+    if len(provider_calls) > remaining_action_budget:
+        return MultiToolBatchPreflight(
+            accepted=False,
+            rejection_reason=MultiToolBatchRejectionReason.ACTION_BUDGET_EXCEEDED,
+        )
+
+    seen_provider_call_ids: set[str] = set()
+    seen_normalized_reads: set[str] = set()
+    prepared_reads: list[PreparedMultiToolRead] = []
+    write_tool_names = {tool.value for tool in WriteToolName}
+
+    for provider_call in provider_calls:
+        if provider_call.id in seen_provider_call_ids:
+            return MultiToolBatchPreflight(
+                accepted=False,
+                rejection_reason=(
+                    MultiToolBatchRejectionReason.DUPLICATE_PROVIDER_CALL_ID
+                ),
+            )
+        seen_provider_call_ids.add(provider_call.id)
+
+        tool_name = provider_call.function.name
+        if tool_name in write_tool_names:
+            return MultiToolBatchPreflight(
+                accepted=False,
+                rejection_reason=MultiToolBatchRejectionReason.CONTAINS_WRITE,
+            )
+        if tool_name not in M3A_REALIZABLE_READ_TOOL_NAMES:
+            return MultiToolBatchPreflight(
+                accepted=False,
+                rejection_reason=MultiToolBatchRejectionReason.UNKNOWN_TOOL,
+            )
+
+        try:
+            parsed = json.loads(provider_call.function.arguments)
+        except (json.JSONDecodeError, TypeError):
+            return MultiToolBatchPreflight(
+                accepted=False,
+                rejection_reason=MultiToolBatchRejectionReason.MALFORMED_ARGUMENTS,
+            )
+        if not isinstance(parsed, dict):
+            return MultiToolBatchPreflight(
+                accepted=False,
+                rejection_reason=MultiToolBatchRejectionReason.MALFORMED_ARGUMENTS,
+            )
+
+        arguments: dict[str, object] = {str(key): value for key, value in parsed.items()}
+        read_tool = ReadToolName(tool_name)
+        if read_tool is ReadToolName.GET_TICKET:
+            supplied_ticket_id = arguments.get("ticket_id")
+            if supplied_ticket_id is not None and supplied_ticket_id != ticket_id:
+                return MultiToolBatchPreflight(
+                    accepted=False,
+                    rejection_reason=(
+                        MultiToolBatchRejectionReason.MALFORMED_ARGUMENTS
+                    ),
+                )
+            arguments["ticket_id"] = ticket_id
+
+        argument_model = _READ_ARGUMENT_MODELS[read_tool]
+        try:
+            validated_arguments = argument_model.model_validate(arguments)
+        except ValidationError:
+            return MultiToolBatchPreflight(
+                accepted=False,
+                rejection_reason=MultiToolBatchRejectionReason.MALFORMED_ARGUMENTS,
+            )
+
+        normalized_arguments = validated_arguments.model_dump(
+            mode="json",
+            exclude_none=True,
+        )
+        normalized_signature = json.dumps(
+            {
+                "tool": read_tool.value,
+                "arguments": normalized_arguments,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        if normalized_signature in seen_normalized_reads:
+            return MultiToolBatchPreflight(
+                accepted=False,
+                rejection_reason=MultiToolBatchRejectionReason.DUPLICATE_READ_CALL,
+            )
+        seen_normalized_reads.add(normalized_signature)
+        prepared_reads.append(
+            PreparedMultiToolRead(
+                provider_tool_call_id=provider_call.id,
+                tool=read_tool,
+                arguments=normalized_arguments,
+                normalized_signature=normalized_signature,
+            )
+        )
+
+    return MultiToolBatchPreflight(
+        accepted=True,
+        prepared_reads=tuple(prepared_reads),
+    )
+
+
+def _realize_environment_call(
+    *,
+    environment: HarbourDeskEnvironment,
+    environment_call: EnvironmentCall,
+    provider_tool_call_id: str,
+    provider_tool_name: str,
+    action_index: int,
+) -> tuple[ToolActionTrace, ChatMessage]:
+    observed = environment.execute(environment_call)
+    observed_payload = observed.model_dump(mode="json", exclude_none=True)
+    action_trace = ToolActionTrace(
+        action_index=action_index,
+        provider_tool_call_id=provider_tool_call_id,
+        environment_call_id=observed.call_id,
+        tool=observed.tool.value,
+        arguments=dict(environment_call.arguments),
+        status=observed.status.value,
+        error_code=(None if observed.error_code is None else observed.error_code.value),
+        result=observed_payload,
+    )
+    tool_message = ChatMessage(
+        role=ChatRole.TOOL,
+        tool_call_id=provider_tool_call_id,
+        name=provider_tool_name,
+        content=json.dumps(observed_payload, sort_keys=True, separators=(",", ":")),
+    )
+    return action_trace, tool_message
 
 
 def _tool_definition(name: str, parameters: dict[str, Any]) -> ToolDefinition:
