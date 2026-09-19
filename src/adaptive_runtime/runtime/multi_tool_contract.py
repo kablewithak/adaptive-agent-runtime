@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from adaptive_runtime.environment.read_tools import ReadToolName
 
@@ -44,6 +44,34 @@ class MultiToolRealizationPolicy(MultiToolContract):
     allow_provider_retry: Literal[False] = False
     bound_by_remaining_tool_action_budget: Literal[True] = True
     validate_deadline_before_each_realized_action: Literal[True] = True
+
+
+class PreparedMultiToolRead(MultiToolContract):
+    provider_tool_call_id: str = Field(min_length=1, max_length=300)
+    tool: ReadToolName
+    arguments: dict[str, object]
+    normalized_signature: str = Field(min_length=1)
+
+
+class MultiToolBatchPreflight(MultiToolContract):
+    accepted: bool
+    prepared_reads: tuple[PreparedMultiToolRead, ...] = ()
+    rejection_reason: MultiToolBatchRejectionReason | None = None
+
+    @model_validator(mode="after")
+    def validate_result_shape(self) -> MultiToolBatchPreflight:
+        if self.accepted:
+            if not self.prepared_reads:
+                raise ValueError("accepted preflight requires prepared reads")
+            if self.rejection_reason is not None:
+                raise ValueError("accepted preflight cannot have a rejection reason")
+            return self
+
+        if self.prepared_reads:
+            raise ValueError("rejected preflight cannot expose executable reads")
+        if self.rejection_reason is None:
+            raise ValueError("rejected preflight requires a rejection reason")
+        return self
 
 
 M3A_POLICY = MultiToolRealizationPolicy()
