@@ -1,0 +1,1028 @@
+{
+  "schema_version": "harbourdesk-r4-template-catalog-v1",
+  "exact_locked_fixture_material_sealed": true,
+  "templates": [
+    {
+      "template_id": "f1-dev-01",
+      "family": "F1",
+      "partition": "development",
+      "mechanism_key": "included_feature_disabled_after_revision",
+      "challenge_statement": "Active plan includes the requested feature, but the entitlement is disabled and still points to an older subscription revision after renewal.",
+      "evidence_requirements": [
+        "subscription plan/revision",
+        "target entitlement",
+        "active access policy",
+        "mutation prerequisites"
+      ],
+      "perturbation_axes": [
+        "plan-feature pair",
+        "revision gap",
+        "healthy sibling entitlements"
+      ],
+      "anti_shortcut_constraints": [
+        "ticket must not state the correct reason",
+        "include irrelevant but valid records"
+      ],
+      "instance_ids": [
+        "hdb-064",
+        "hdb-011",
+        "hdb-053",
+        "hdb-134",
+        "hdb-096"
+      ]
+    },
+    {
+      "template_id": "f1-dev-02",
+      "family": "F1",
+      "partition": "development",
+      "mechanism_key": "included_feature_single_record_drift",
+      "challenge_statement": "The plan and account are consistent, but one included feature entitlement is simply wrong and requires evidence-backed reconciliation.",
+      "evidence_requirements": [
+        "subscription",
+        "entitlement",
+        "access policy"
+      ],
+      "perturbation_axes": [
+        "feature",
+        "plan tier",
+        "entitlement revision"
+      ],
+      "anti_shortcut_constraints": [
+        "do not reuse diagnostic wording",
+        "vary healthy sibling features"
+      ],
+      "instance_ids": [
+        "hdb-155",
+        "hdb-120",
+        "hdb-038",
+        "hdb-137",
+        "hdb-089"
+      ]
+    },
+    {
+      "template_id": "f1-dev-03",
+      "family": "F1",
+      "partition": "development",
+      "mechanism_key": "unsupported_feature_on_lower_plan",
+      "challenge_statement": "The requester expects a feature that the current plan does not include, with entitlement state that may be stale or misleading.",
+      "evidence_requirements": [
+        "current plan",
+        "entitlement",
+        "access policy"
+      ],
+      "perturbation_axes": [
+        "plan boundary",
+        "feature",
+        "stale enabled/disabled state"
+      ],
+      "anti_shortcut_constraints": [
+        "plan name alone cannot encode outcome",
+        "include both stale-enabled and missing-access symptoms"
+      ],
+      "instance_ids": [
+        "hdb-040",
+        "hdb-157",
+        "hdb-079",
+        "hdb-016",
+        "hdb-129"
+      ]
+    },
+    {
+      "template_id": "f1-val-01",
+      "family": "F1",
+      "partition": "validation",
+      "mechanism_key": "included_collaboration_missing_post_renewal",
+      "challenge_statement": "A collaboration-class feature disappears after renewal while ownership, authority, and policy evidence remain straightforward.",
+      "evidence_requirements": [
+        "subscription revision",
+        "entitlement",
+        "active policy",
+        "approval state"
+      ],
+      "perturbation_axes": [
+        "feature wording",
+        "revision distance",
+        "unrelated account noise"
+      ],
+      "anti_shortcut_constraints": [
+        "no development ticket wording",
+        "no stale-policy distractor"
+      ],
+      "instance_ids": [
+        "hdb-078",
+        "hdb-162",
+        "hdb-164",
+        "hdb-166",
+        "hdb-004"
+      ]
+    },
+    {
+      "template_id": "f1-lock-01",
+      "family": "F1",
+      "partition": "locked",
+      "mechanism_key": "post_upgrade_entitlement_lags_plan",
+      "challenge_statement": "A plan upgrade is reflected in the subscription while one newly included entitlement still reflects the pre-upgrade state.",
+      "evidence_requirements": [
+        "subscription",
+        "entitlement",
+        "active policy",
+        "mutation prerequisites"
+      ],
+      "perturbation_axes": [
+        "upgrade path",
+        "feature",
+        "revision lag"
+      ],
+      "anti_shortcut_constraints": [
+        "exact values/text remain sealed",
+        "no copied diagnostic prose"
+      ],
+      "instance_ids": [
+        "hdb-133",
+        "hdb-158",
+        "hdb-030",
+        "hdb-023",
+        "hdb-050"
+      ]
+    },
+    {
+      "template_id": "f1-lock-02",
+      "family": "F1",
+      "partition": "locked",
+      "mechanism_key": "post_downgrade_stale_entitlement_enabled",
+      "challenge_statement": "A downgraded subscription no longer includes a feature, but the entitlement remains enabled and must be interpreted against the current plan.",
+      "evidence_requirements": [
+        "subscription tier",
+        "entitlement",
+        "active policy"
+      ],
+      "perturbation_axes": [
+        "downgrade path",
+        "feature",
+        "revision relation"
+      ],
+      "anti_shortcut_constraints": [
+        "exact values remain sealed",
+        "challenge is state mismatch, not policy versioning"
+      ],
+      "instance_ids": [
+        "hdb-081",
+        "hdb-121",
+        "hdb-115",
+        "hdb-104",
+        "hdb-168"
+      ]
+    },
+    {
+      "template_id": "f2-dev-01",
+      "family": "F2",
+      "partition": "development",
+      "mechanism_key": "feature_reference_ambiguous_one_account",
+      "challenge_statement": "Vague ticket language could refer to more than one feature on the same account, so selecting a target without clarification would be unsafe.",
+      "evidence_requirements": [
+        "ticket text",
+        "entitlement inventory",
+        "plan features"
+      ],
+      "perturbation_axes": [
+        "ambiguous phrase",
+        "candidate feature pair",
+        "enabled states"
+      ],
+      "anti_shortcut_constraints": [
+        "no canonical feature IDs in ticket",
+        "no single feature dominates all instances"
+      ],
+      "instance_ids": [
+        "hdb-144",
+        "hdb-077",
+        "hdb-035",
+        "hdb-126",
+        "hdb-058"
+      ]
+    },
+    {
+      "template_id": "f2-dev-02",
+      "family": "F2",
+      "partition": "development",
+      "mechanism_key": "account_scope_ambiguous_multi_account",
+      "challenge_statement": "The requester manages multiple accounts but does not identify which account the requested action should affect.",
+      "evidence_requirements": [
+        "ticket scope",
+        "requester authority",
+        "candidate accounts/subscriptions"
+      ],
+      "perturbation_axes": [
+        "account count",
+        "action class",
+        "plan differences"
+      ],
+      "anti_shortcut_constraints": [
+        "both accounts must be plausible",
+        "ticket account field alone must not resolve intent"
+      ],
+      "instance_ids": [
+        "hdb-146",
+        "hdb-175",
+        "hdb-108",
+        "hdb-174",
+        "hdb-172"
+      ]
+    },
+    {
+      "template_id": "f2-dev-03",
+      "family": "F2",
+      "partition": "development",
+      "mechanism_key": "action_ambiguous_access_fix_vs_cancellation",
+      "challenge_statement": "The request can reasonably mean either correcting access or ending service, and the runtime must not infer a state-changing action from ambiguous wording.",
+      "evidence_requirements": [
+        "ticket",
+        "account/subscription/entitlement state",
+        "active policies"
+      ],
+      "perturbation_axes": [
+        "ambiguous verb",
+        "feature symptom",
+        "subscription condition"
+      ],
+      "anti_shortcut_constraints": [
+        "both interpretations plausible",
+        "no explicit cancellation date or feature ID"
+      ],
+      "instance_ids": [
+        "hdb-113",
+        "hdb-122",
+        "hdb-041",
+        "hdb-037",
+        "hdb-102"
+      ]
+    },
+    {
+      "template_id": "f2-val-01",
+      "family": "F2",
+      "partition": "validation",
+      "mechanism_key": "feature_alias_matches_multiple_entitlements",
+      "challenge_statement": "A colloquial feature alias plausibly maps to multiple entitlement records and requires clarification rather than arbitrary selection.",
+      "evidence_requirements": [
+        "ticket phrase",
+        "entitlements",
+        "plan policy"
+      ],
+      "perturbation_axes": [
+        "alias",
+        "feature pair",
+        "state combination"
+      ],
+      "anti_shortcut_constraints": [
+        "aliases differ from development",
+        "notes do not encode answer"
+      ],
+      "instance_ids": [
+        "hdb-031",
+        "hdb-010",
+        "hdb-156",
+        "hdb-101",
+        "hdb-019"
+      ]
+    },
+    {
+      "template_id": "f2-lock-01",
+      "family": "F2",
+      "partition": "locked",
+      "mechanism_key": "scope_ambiguous_two_valid_subscriptions",
+      "challenge_statement": "Two in-scope subscriptions are both reasonable referents for the request and the correct target cannot be established from the request alone.",
+      "evidence_requirements": [
+        "requester/account relations",
+        "two subscriptions",
+        "ticket context"
+      ],
+      "perturbation_axes": [
+        "tiers",
+        "action",
+        "requester role"
+      ],
+      "anti_shortcut_constraints": [
+        "exact arrangement sealed",
+        "neither candidate obviously irrelevant"
+      ],
+      "instance_ids": [
+        "hdb-020",
+        "hdb-128",
+        "hdb-052",
+        "hdb-127",
+        "hdb-083"
+      ]
+    },
+    {
+      "template_id": "f2-lock-02",
+      "family": "F2",
+      "partition": "locked",
+      "mechanism_key": "cancellation_timing_ambiguous",
+      "challenge_statement": "The requester asks to end service using timing language that does not uniquely specify an allowed effective date.",
+      "evidence_requirements": [
+        "ticket wording",
+        "active cancellation policy",
+        "subscription/authority state"
+      ],
+      "perturbation_axes": [
+        "timing phrase",
+        "frozen date",
+        "revision"
+      ],
+      "anti_shortcut_constraints": [
+        "exact language sealed",
+        "do not copy diagnostic phrasing"
+      ],
+      "instance_ids": [
+        "hdb-032",
+        "hdb-165",
+        "hdb-039",
+        "hdb-068",
+        "hdb-112"
+      ]
+    },
+    {
+      "template_id": "f3-dev-01",
+      "family": "F3",
+      "partition": "development",
+      "mechanism_key": "expired_access_policy_conflicts_current",
+      "challenge_statement": "An expired access policy supports the requester\u2019s claim while the currently active access policy does not.",
+      "evidence_requirements": [
+        "stale policy",
+        "active policy",
+        "frozen time",
+        "subscription"
+      ],
+      "perturbation_axes": [
+        "feature",
+        "validity dates",
+        "stale claim location"
+      ],
+      "anti_shortcut_constraints": [
+        "validity timestamps must matter",
+        "stale text remains plausible"
+      ],
+      "instance_ids": [
+        "hdb-159",
+        "hdb-154",
+        "hdb-002",
+        "hdb-170",
+        "hdb-098"
+      ]
+    },
+    {
+      "template_id": "f3-dev-02",
+      "family": "F3",
+      "partition": "development",
+      "mechanism_key": "expired_cancellation_policy_conflicts_current",
+      "challenge_statement": "A superseded cancellation rule permits an earlier date than the active rule, requiring active-at-time reasoning.",
+      "evidence_requirements": [
+        "old/current cancellation policies",
+        "frozen time",
+        "subscription",
+        "authority"
+      ],
+      "perturbation_axes": [
+        "boundary dates",
+        "requested timing",
+        "revision"
+      ],
+      "anti_shortcut_constraints": [
+        "current policy need not rank first",
+        "notes may quote old rule"
+      ],
+      "instance_ids": [
+        "hdb-125",
+        "hdb-056",
+        "hdb-145",
+        "hdb-132",
+        "hdb-029"
+      ]
+    },
+    {
+      "template_id": "f3-dev-03",
+      "family": "F3",
+      "partition": "development",
+      "mechanism_key": "ticket_note_quotes_superseded_policy",
+      "challenge_statement": "A ticket note confidently quotes a superseded policy excerpt that conflicts with the active policy document.",
+      "evidence_requirements": [
+        "ticket notes",
+        "policy search",
+        "active policy",
+        "frozen time"
+      ],
+      "perturbation_axes": [
+        "quoted rule",
+        "policy topic",
+        "note provenance"
+      ],
+      "anti_shortcut_constraints": [
+        "note must be credible distractor",
+        "active policy requires separate read"
+      ],
+      "instance_ids": [
+        "hdb-028",
+        "hdb-033",
+        "hdb-034",
+        "hdb-149",
+        "hdb-161"
+      ]
+    },
+    {
+      "template_id": "f3-val-01",
+      "family": "F3",
+      "partition": "validation",
+      "mechanism_key": "policy_search_stale_and_active_matches",
+      "challenge_statement": "Policy search returns multiple strong matches, including stale material, and validity must be inspected rather than trusting the first text match.",
+      "evidence_requirements": [
+        "search metadata",
+        "candidate policies",
+        "frozen time"
+      ],
+      "perturbation_axes": [
+        "query",
+        "match scores",
+        "validity windows"
+      ],
+      "anti_shortcut_constraints": [
+        "stale may rank first",
+        "IDs cannot encode status"
+      ],
+      "instance_ids": [
+        "hdb-024",
+        "hdb-117",
+        "hdb-143",
+        "hdb-152",
+        "hdb-095"
+      ]
+    },
+    {
+      "template_id": "f3-lock-01",
+      "family": "F3",
+      "partition": "locked",
+      "mechanism_key": "future_dated_policy_not_yet_active",
+      "challenge_statement": "A newer policy exists but begins after the frozen case time, so an older active policy still governs the task.",
+      "evidence_requirements": [
+        "future policy",
+        "current policy",
+        "frozen time"
+      ],
+      "perturbation_axes": [
+        "future effective date",
+        "topic",
+        "version order"
+      ],
+      "anti_shortcut_constraints": [
+        "exact dates/text sealed",
+        "higher version cannot imply authority"
+      ],
+      "instance_ids": [
+        "hdb-085",
+        "hdb-073",
+        "hdb-071",
+        "hdb-088",
+        "hdb-094"
+      ]
+    },
+    {
+      "template_id": "f3-lock-02",
+      "family": "F3",
+      "partition": "locked",
+      "mechanism_key": "policy_boundary_at_frozen_time",
+      "challenge_statement": "Two policy versions meet near the frozen timestamp, requiring precise interval interpretation rather than loose recency reasoning.",
+      "evidence_requirements": [
+        "policy validity intervals",
+        "exact frozen timestamp"
+      ],
+      "perturbation_axes": [
+        "boundary offset",
+        "topic",
+        "version sequence"
+      ],
+      "anti_shortcut_constraints": [
+        "exact boundary values sealed",
+        "avoid repeated date pattern"
+      ],
+      "instance_ids": [
+        "hdb-076",
+        "hdb-044",
+        "hdb-021",
+        "hdb-116",
+        "hdb-006"
+      ]
+    },
+    {
+      "template_id": "f4-dev-01",
+      "family": "F4",
+      "partition": "development",
+      "mechanism_key": "entitlement_source_revision_conflicts_subscription",
+      "challenge_statement": "The entitlement references an older subscription revision while the current subscription indicates a different access state.",
+      "evidence_requirements": [
+        "subscription revision",
+        "entitlement source revision",
+        "policy"
+      ],
+      "perturbation_axes": [
+        "revision gap",
+        "feature",
+        "enabled state"
+      ],
+      "anti_shortcut_constraints": [
+        "not every mismatch implies same action",
+        "include unrelated consistent records"
+      ],
+      "instance_ids": [
+        "hdb-059",
+        "hdb-099",
+        "hdb-075",
+        "hdb-135",
+        "hdb-173"
+      ]
+    },
+    {
+      "template_id": "f4-dev-02",
+      "family": "F4",
+      "partition": "development",
+      "mechanism_key": "subscription_owner_conflicts_account_link",
+      "challenge_statement": "The account points to a subscription whose ownership field identifies a different account, making mutation unsafe.",
+      "evidence_requirements": [
+        "account",
+        "subscription",
+        "ticket scope"
+      ],
+      "perturbation_axes": [
+        "same-tenant topology",
+        "plan",
+        "symptom"
+      ],
+      "anti_shortcut_constraints": [
+        "all records must exist",
+        "requires comparing multiple records"
+      ],
+      "instance_ids": [
+        "hdb-018",
+        "hdb-036",
+        "hdb-138",
+        "hdb-163",
+        "hdb-097"
+      ]
+    },
+    {
+      "template_id": "f4-dev-03",
+      "family": "F4",
+      "partition": "development",
+      "mechanism_key": "entitlement_plan_revision_chain_conflict",
+      "challenge_statement": "Entitlement enabled state and recorded provenance disagree with the current plan in a multi-field contradiction.",
+      "evidence_requirements": [
+        "plan",
+        "entitlement state",
+        "source revision",
+        "policy"
+      ],
+      "perturbation_axes": [
+        "tier",
+        "enabled direction",
+        "revision relation"
+      ],
+      "anti_shortcut_constraints": [
+        "distinct from F1 single-record drift",
+        "at least two fields contradict"
+      ],
+      "instance_ids": [
+        "hdb-100",
+        "hdb-027",
+        "hdb-069",
+        "hdb-179",
+        "hdb-118"
+      ]
+    },
+    {
+      "template_id": "f4-val-01",
+      "family": "F4",
+      "partition": "validation",
+      "mechanism_key": "migration_account_subscription_reference_conflict",
+      "challenge_statement": "A migration leaves account-to-subscription linkage inconsistent with subscription ownership while the ticket symptom appears routine.",
+      "evidence_requirements": [
+        "account link",
+        "subscription owner",
+        "entitlement",
+        "ticket"
+      ],
+      "perturbation_axes": [
+        "migration note",
+        "plan",
+        "feature"
+      ],
+      "anti_shortcut_constraints": [
+        "wording alone cannot decide",
+        "no copied diagnostic IDs/prose"
+      ],
+      "instance_ids": [
+        "hdb-014",
+        "hdb-150",
+        "hdb-087",
+        "hdb-048",
+        "hdb-147"
+      ]
+    },
+    {
+      "template_id": "f4-lock-01",
+      "family": "F4",
+      "partition": "locked",
+      "mechanism_key": "target_account_vs_subscription_owner_conflict",
+      "challenge_statement": "The ticket target account and recorded subscription owner disagree within one tenant, requiring safe contradiction handling.",
+      "evidence_requirements": [
+        "ticket/account",
+        "subscription owner",
+        "tenant scope"
+      ],
+      "perturbation_axes": [
+        "topology",
+        "plan",
+        "request type"
+      ],
+      "anti_shortcut_constraints": [
+        "exact topology sealed",
+        "all IDs opaque"
+      ],
+      "instance_ids": [
+        "hdb-178",
+        "hdb-106",
+        "hdb-066",
+        "hdb-084",
+        "hdb-167"
+      ]
+    },
+    {
+      "template_id": "f4-lock-02",
+      "family": "F4",
+      "partition": "locked",
+      "mechanism_key": "multi_record_revision_chain_impossible",
+      "challenge_statement": "Subscription and entitlement revisions form an internally inconsistent provenance chain even though each record is syntactically valid.",
+      "evidence_requirements": [
+        "subscription revision",
+        "entitlement revisions",
+        "policy"
+      ],
+      "perturbation_axes": [
+        "revision pattern",
+        "feature",
+        "tier"
+      ],
+      "anti_shortcut_constraints": [
+        "exact pattern sealed",
+        "single-record checks insufficient"
+      ],
+      "instance_ids": [
+        "hdb-111",
+        "hdb-105",
+        "hdb-153",
+        "hdb-017",
+        "hdb-080"
+      ]
+    },
+    {
+      "template_id": "f5-dev-01",
+      "family": "F5",
+      "partition": "development",
+      "mechanism_key": "requester_unauthorised_valid_approval",
+      "challenge_statement": "A valid action approval exists, but the requesting contact is not authorised for the target account.",
+      "evidence_requirements": [
+        "requester",
+        "authorised contacts",
+        "approval",
+        "authority policy"
+      ],
+      "perturbation_axes": [
+        "action",
+        "role wording",
+        "target"
+      ],
+      "anti_shortcut_constraints": [
+        "approval presence must make case nontrivial",
+        "vary unauthorised role wording"
+      ],
+      "instance_ids": [
+        "hdb-022",
+        "hdb-042",
+        "hdb-047",
+        "hdb-012",
+        "hdb-082"
+      ]
+    },
+    {
+      "template_id": "f5-dev-02",
+      "family": "F5",
+      "partition": "development",
+      "mechanism_key": "approval_expired_authorised_requester",
+      "challenge_statement": "The requester is authorised but the otherwise applicable approval expired before the frozen time.",
+      "evidence_requirements": [
+        "requester authority",
+        "approval times",
+        "frozen time",
+        "policy"
+      ],
+      "perturbation_axes": [
+        "expiry distance",
+        "action",
+        "target"
+      ],
+      "anti_shortcut_constraints": [
+        "requester truly authorised",
+        "vary expiry patterns"
+      ],
+      "instance_ids": [
+        "hdb-093",
+        "hdb-107",
+        "hdb-005",
+        "hdb-110",
+        "hdb-140"
+      ]
+    },
+    {
+      "template_id": "f5-dev-03",
+      "family": "F5",
+      "partition": "development",
+      "mechanism_key": "approval_action_mismatch",
+      "challenge_statement": "An unexpired approval exists for the account but authorises a different action than the ticket would require.",
+      "evidence_requirements": [
+        "approval permitted_action",
+        "requested action",
+        "authority"
+      ],
+      "perturbation_axes": [
+        "action pair",
+        "approval action",
+        "ticket wording"
+      ],
+      "anti_shortcut_constraints": [
+        "approval valid in time/account",
+        "mismatch not explicit in text"
+      ],
+      "instance_ids": [
+        "hdb-123",
+        "hdb-139",
+        "hdb-063",
+        "hdb-060",
+        "hdb-013"
+      ]
+    },
+    {
+      "template_id": "f5-val-01",
+      "family": "F5",
+      "partition": "validation",
+      "mechanism_key": "approval_belongs_sibling_account",
+      "challenge_statement": "A valid approval exists in the tenant but belongs to another account while the requester is authorised for the target account.",
+      "evidence_requirements": [
+        "target account",
+        "approval account",
+        "requester",
+        "ticket"
+      ],
+      "perturbation_axes": [
+        "sibling count",
+        "action",
+        "timing"
+      ],
+      "anti_shortcut_constraints": [
+        "both accounts plausible",
+        "ID cannot encode mismatch"
+      ],
+      "instance_ids": [
+        "hdb-130",
+        "hdb-090",
+        "hdb-003",
+        "hdb-001",
+        "hdb-109"
+      ]
+    },
+    {
+      "template_id": "f5-lock-01",
+      "family": "F5",
+      "partition": "locked",
+      "mechanism_key": "requester_authorised_only_sibling_account",
+      "challenge_statement": "The requester is legitimately authorised elsewhere in the tenant but not on the account targeted by the ticket.",
+      "evidence_requirements": [
+        "requester",
+        "target/sibling contacts",
+        "approval state"
+      ],
+      "perturbation_axes": [
+        "topology",
+        "action",
+        "contact overlap"
+      ],
+      "anti_shortcut_constraints": [
+        "exact topology sealed",
+        "requester appears plausibly privileged"
+      ],
+      "instance_ids": [
+        "hdb-065",
+        "hdb-092",
+        "hdb-043",
+        "hdb-062",
+        "hdb-171"
+      ]
+    },
+    {
+      "template_id": "f5-lock-02",
+      "family": "F5",
+      "partition": "locked",
+      "mechanism_key": "approval_issued_after_frozen_time",
+      "challenge_statement": "The approval matches account and action but was issued after the frozen case time and therefore cannot authorize mutation.",
+      "evidence_requirements": [
+        "approval times",
+        "frozen time",
+        "account/action match"
+      ],
+      "perturbation_axes": [
+        "future offset",
+        "action",
+        "requester role"
+      ],
+      "anti_shortcut_constraints": [
+        "timestamps sealed",
+        "IDs do not reveal future status"
+      ],
+      "instance_ids": [
+        "hdb-057",
+        "hdb-046",
+        "hdb-054",
+        "hdb-045",
+        "hdb-169"
+      ]
+    },
+    {
+      "template_id": "f6-dev-01",
+      "family": "F6",
+      "partition": "development",
+      "mechanism_key": "prior_committed_entitlement_missing_ack",
+      "challenge_statement": "A prior entitlement operation lost its acknowledgement but is recorded committed and state reflects the write, so duplicate mutation must be avoided.",
+      "evidence_requirements": [
+        "operation record",
+        "current entitlement",
+        "operations policy",
+        "ticket reference"
+      ],
+      "perturbation_axes": [
+        "feature",
+        "revision pair",
+        "symptom"
+      ],
+      "anti_shortcut_constraints": [
+        "status discovered through evidence",
+        "state corroborates operation"
+      ],
+      "instance_ids": [
+        "hdb-074",
+        "hdb-151",
+        "hdb-124",
+        "hdb-061",
+        "hdb-007"
+      ]
+    },
+    {
+      "template_id": "f6-dev-02",
+      "family": "F6",
+      "partition": "development",
+      "mechanism_key": "prior_entitlement_outcome_unknown",
+      "challenge_statement": "A prior entitlement operation has unknown outcome after response loss, so blind retry is prohibited even if access still appears wrong.",
+      "evidence_requirements": [
+        "operation record",
+        "entitlement state",
+        "operations policy"
+      ],
+      "perturbation_axes": [
+        "feature",
+        "state after interruption",
+        "operation metadata"
+      ],
+      "anti_shortcut_constraints": [
+        "ticket may pressure retry",
+        "unknown status not stated as fact"
+      ],
+      "instance_ids": [
+        "hdb-142",
+        "hdb-070",
+        "hdb-049",
+        "hdb-015",
+        "hdb-026"
+      ]
+    },
+    {
+      "template_id": "f6-dev-03",
+      "family": "F6",
+      "partition": "development",
+      "mechanism_key": "prior_operation_failed",
+      "challenge_statement": "A previous attempt is recorded failed rather than committed or unknown, requiring the runtime to distinguish a known failure from uncertainty.",
+      "evidence_requirements": [
+        "operation status",
+        "target state",
+        "operations policy",
+        "approval"
+      ],
+      "perturbation_axes": [
+        "action",
+        "failure context",
+        "state"
+      ],
+      "anti_shortcut_constraints": [
+        "failed and unknown stay distinct",
+        "status discovered through evidence"
+      ],
+      "instance_ids": [
+        "hdb-136",
+        "hdb-148",
+        "hdb-103",
+        "hdb-067",
+        "hdb-008"
+      ]
+    },
+    {
+      "template_id": "f6-val-01",
+      "family": "F6",
+      "partition": "validation",
+      "mechanism_key": "prior_committed_cancellation_missing_ack",
+      "challenge_statement": "A cancellation operation lost its acknowledgement but is recorded committed and the subscription already reflects scheduled cancellation.",
+      "evidence_requirements": [
+        "operation",
+        "subscription",
+        "operations policy",
+        "cancellation policy"
+      ],
+      "perturbation_axes": [
+        "effective date",
+        "revision",
+        "ticket wording"
+      ],
+      "anti_shortcut_constraints": [
+        "distinct from entitlement cases",
+        "ticket does not reveal status"
+      ],
+      "instance_ids": [
+        "hdb-119",
+        "hdb-180",
+        "hdb-131",
+        "hdb-086",
+        "hdb-051"
+      ]
+    },
+    {
+      "template_id": "f6-lock-01",
+      "family": "F6",
+      "partition": "locked",
+      "mechanism_key": "idempotency_key_different_arguments_conflict",
+      "challenge_statement": "A prior operation reused the logical idempotency identity for different arguments, so it cannot be treated as a safe replay.",
+      "evidence_requirements": [
+        "operation idempotency metadata",
+        "current target",
+        "operations policy"
+      ],
+      "perturbation_axes": [
+        "action",
+        "argument difference",
+        "state"
+      ],
+      "anti_shortcut_constraints": [
+        "exact arguments sealed",
+        "ticket does not reveal conflict"
+      ],
+      "instance_ids": [
+        "hdb-160",
+        "hdb-091",
+        "hdb-114",
+        "hdb-025",
+        "hdb-055"
+      ]
+    },
+    {
+      "template_id": "f6-lock-02",
+      "family": "F6",
+      "partition": "locked",
+      "mechanism_key": "prior_cancellation_outcome_unknown",
+      "challenge_statement": "A previous cancellation attempt has unknown outcome and current subscription state does not safely prove whether the mutation committed.",
+      "evidence_requirements": [
+        "operation",
+        "subscription",
+        "operations policy",
+        "cancellation policy"
+      ],
+      "perturbation_axes": [
+        "subscription state",
+        "operation metadata",
+        "timing"
+      ],
+      "anti_shortcut_constraints": [
+        "exact combination sealed",
+        "no deterministic ID cue"
+      ],
+      "instance_ids": [
+        "hdb-009",
+        "hdb-177",
+        "hdb-072",
+        "hdb-141",
+        "hdb-176"
+      ]
+    }
+  ]
+}
