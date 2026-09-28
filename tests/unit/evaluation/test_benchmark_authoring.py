@@ -16,7 +16,7 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def test_r4_template_catalog_shape_and_mechanism_uniqueness() -> None:
+def test_r4_template_catalog_shape_and_explicit_mechanism_uniqueness() -> None:
     catalog = load_r4_template_catalog(_repo_root())
 
     assert catalog.exact_locked_fixture_material_sealed is True
@@ -26,8 +26,14 @@ def test_r4_template_catalog_shape_and_mechanism_uniqueness() -> None:
     assert len(case_ids) == R4_CASE_COUNT
     assert len(set(case_ids)) == R4_CASE_COUNT
 
-    mechanisms = [template.mechanism_key for template in catalog.templates]
-    assert len(set(mechanisms)) == R4_TEMPLATE_COUNT
+    explicit = [
+        template.mechanism_key
+        for template in catalog.templates
+        if template.partition is not BenchmarkPartition.LOCKED
+    ]
+    assert len(explicit) == 24
+    assert None not in explicit
+    assert len(set(explicit)) == 24
 
     for family in HarbourDeskFailureFamily:
         family_templates = [template for template in catalog.templates if template.family is family]
@@ -52,7 +58,7 @@ def test_public_case_ids_do_not_encode_family_or_partition() -> None:
             assert "hdm-" not in case_id.lower()
 
 
-def test_exact_locked_fixture_material_remains_sealed() -> None:
+def test_locked_template_mechanisms_and_exact_payloads_remain_sealed() -> None:
     catalog = load_r4_template_catalog(_repo_root())
 
     locked = [
@@ -62,16 +68,10 @@ def test_exact_locked_fixture_material_remains_sealed() -> None:
     ]
     assert len(locked) == 12
 
-    forbidden = (
-        "expected.json",
-        "resolution_reason_code",
-        "ticket_id",
-        "account_id",
-        "subscription_id",
-        "approval_id",
-        "operation_id",
-    )
     for template in locked:
-        serialized = template.model_dump_json()
-        for term in forbidden:
-            assert term not in serialized
+        assert template.sealed is True
+        assert template.mechanism_key is None
+        assert template.challenge_statement is None
+        assert template.evidence_requirements == ()
+        assert template.perturbation_axes == ()
+        assert template.anti_shortcut_constraints == ()

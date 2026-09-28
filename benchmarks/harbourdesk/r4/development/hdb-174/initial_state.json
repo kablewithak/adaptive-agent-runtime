@@ -1,0 +1,100 @@
+{
+  "frozen_at": "2026-10-08T12:00:00Z",
+  "tenants": [
+    {
+      "tenant_id": "tenant-hdb-174",
+      "display_name": "HarbourDesk Synthetic hdb-174",
+      "active": true
+    }
+  ],
+  "accounts": [
+    {
+      "account_id": "acct-hdb-174-a",
+      "tenant_id": "tenant-hdb-174",
+      "subscription_id": "sub-hdb-174-a",
+      "authorised_contacts": [
+        "owner-hdb-174@example.test"
+      ]
+    },
+    {
+      "account_id": "acct-hdb-174-b",
+      "tenant_id": "tenant-hdb-174",
+      "subscription_id": "sub-hdb-174-b",
+      "authorised_contacts": [
+        "owner-hdb-174@example.test"
+      ]
+    }
+  ],
+  "subscriptions": [
+    {
+      "subscription_id": "sub-hdb-174-a",
+      "account_id": "acct-hdb-174-a",
+      "plan_id": "team",
+      "status": "active",
+      "start_at": "2026-04-11T12:00:00Z",
+      "end_at": null,
+      "cancellation_effective_at": null,
+      "revision": 7
+    },
+    {
+      "subscription_id": "sub-hdb-174-b",
+      "account_id": "acct-hdb-174-b",
+      "plan_id": "business",
+      "status": "active",
+      "start_at": "2026-04-11T12:00:00Z",
+      "end_at": null,
+      "cancellation_effective_at": null,
+      "revision": 8
+    }
+  ],
+  "entitlements": [],
+  "tickets": [
+    {
+      "ticket_id": "ticket-hdb-174",
+      "tenant_id": "tenant-hdb-174",
+      "account_id": "acct-hdb-174-a",
+      "requesting_contact": "owner-hdb-174@example.test",
+      "initial_text": "Please end the workspace subscription we discussed. I manage both of our workspaces.",
+      "notes": [
+        "Requester administers two active workspace accounts."
+      ],
+      "status": "open",
+      "revision": 1,
+      "resolution_reason_code": null,
+      "evidence_document_ids": [],
+      "operation_ids": []
+    }
+  ],
+  "policies": [
+    {
+      "document_id": "policy-ticket-hdb-174-cancel-02",
+      "version": 2,
+      "valid_from": "2026-08-29T12:00:00Z",
+      "valid_to": null,
+      "authority": "HarbourDesk Operations",
+      "body": "Current cancellation policy. The earliest permitted cancellation is seven full days after the frozen case time. The requester must be authorised and an unexpired schedule_cancellation approval must exist.",
+      "content_hash": "7b23f263f411cfc20104229770a62b339067bedd9f94322f11e6e40858ab3c18"
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "approval-hdb-174-a",
+      "tenant_id": "tenant-hdb-174",
+      "account_id": "acct-hdb-174-a",
+      "permitted_action": "schedule_cancellation",
+      "issued_at": "2026-10-06T12:00:00Z",
+      "expires_at": "2026-10-10T12:00:00Z",
+      "issuer_type": "system"
+    },
+    {
+      "approval_id": "approval-hdb-174-b",
+      "tenant_id": "tenant-hdb-174",
+      "account_id": "acct-hdb-174-b",
+      "permitted_action": "schedule_cancellation",
+      "issued_at": "2026-10-06T12:00:00Z",
+      "expires_at": "2026-10-10T12:00:00Z",
+      "issuer_type": "system"
+    }
+  ],
+  "operations": []
+}
