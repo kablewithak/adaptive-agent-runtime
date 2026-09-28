@@ -1,8 +1,8 @@
 # HarbourDesk R4 — 36-Template Authoring Catalog
 
-**Date:** 2026-09-28  
-**Stage:** R4 template authoring  
-**Status:** PROPOSED — validate locally before fixture materialization  
+**Date:** 2026-09-28
+**Stage:** R4 template authoring
+**Status:** PROPOSED — validate locally before fixture materialization
 **Live traffic:** NONE
 
 ## Purpose
