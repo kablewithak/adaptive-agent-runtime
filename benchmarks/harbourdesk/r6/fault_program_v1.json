@@ -1,0 +1,275 @@
+{
+  "acceptance": {
+    "all_cases_complete": true,
+    "evidence_complete_required": true,
+    "invariant_failures_required": 0,
+    "partial_program_result": "INCONCLUSIVE",
+    "unexpected_effective_writes_required": 0
+  },
+  "case_count": 24,
+  "cases": [
+    {
+      "case_id": "r6-p1-01",
+      "family": "P1_PROVIDER_PROTOCOL",
+      "fault": "provider_timeout",
+      "invariants": [
+        "single provider dispatch only",
+        "stop category is provider_error",
+        "usage is unknown_after_error",
+        "zero environment actions"
+      ],
+      "target": "runtime/provider boundary"
+    },
+    {
+      "case_id": "r6-p1-02",
+      "family": "P1_PROVIDER_PROTOCOL",
+      "fault": "provider_refusal",
+      "invariants": [
+        "stop category is provider_refusal",
+        "zero environment actions",
+        "no terminal ticket claim is fabricated"
+      ],
+      "target": "runtime/provider boundary"
+    },
+    {
+      "case_id": "r6-p1-03",
+      "family": "P1_PROVIDER_PROTOCOL",
+      "fault": "provider_request_identity_mismatch",
+      "invariants": [
+        "mismatched response fails closed",
+        "stop category is provider_error",
+        "protocol error is recorded",
+        "zero environment actions"
+      ],
+      "target": "runtime/provider boundary"
+    },
+    {
+      "case_id": "r6-p1-04",
+      "family": "P1_PROVIDER_PROTOCOL",
+      "fault": "successful_response_missing_usage",
+      "invariants": [
+        "missing usage is explicit",
+        "missing usage is never imputed",
+        "trajectory remains mechanically bounded"
+      ],
+      "target": "usage accounting"
+    },
+    {
+      "case_id": "r6-p2-01",
+      "family": "P2_TOOL_REALIZATION",
+      "fault": "malformed_tool_arguments",
+      "invariants": [
+        "stop category is invalid_tool_call",
+        "zero environment actions",
+        "state remains unchanged"
+      ],
+      "target": "tool schema boundary"
+    },
+    {
+      "case_id": "r6-p2-02",
+      "family": "P2_TOOL_REALIZATION",
+      "fault": "foreign_ticket_scope_attempt",
+      "invariants": [
+        "model cannot override current ticket scope",
+        "zero environment actions",
+        "state remains unchanged"
+      ],
+      "target": "host-controlled scope"
+    },
+    {
+      "case_id": "r6-p2-03",
+      "family": "P2_TOOL_REALIZATION",
+      "fault": "multi_tool_batch_contains_write",
+      "invariants": [
+        "entire batch is rejected",
+        "no prefix action executes",
+        "zero writes execute"
+      ],
+      "target": "multi-tool preflight"
+    },
+    {
+      "case_id": "r6-p2-04",
+      "family": "P2_TOOL_REALIZATION",
+      "fault": "duplicate_multi_tool_call_id",
+      "invariants": [
+        "entire batch is rejected",
+        "zero environment actions",
+        "duplicate provider call identity is not normalized away"
+      ],
+      "target": "multi-tool preflight"
+    },
+    {
+      "case_id": "r6-p3-01",
+      "family": "P3_BUDGET_DEADLINE",
+      "fault": "model_call_budget_exhausted",
+      "invariants": [
+        "no dispatch occurs beyond model-call budget",
+        "stop category records model_call_budget_exhausted"
+      ],
+      "target": "trajectory budget"
+    },
+    {
+      "case_id": "r6-p3-02",
+      "family": "P3_BUDGET_DEADLINE",
+      "fault": "tool_action_budget_exhausted",
+      "invariants": [
+        "no action executes beyond tool-action budget",
+        "stop category records tool_action_budget_exhausted"
+      ],
+      "target": "trajectory budget"
+    },
+    {
+      "case_id": "r6-p3-03",
+      "family": "P3_BUDGET_DEADLINE",
+      "fault": "deadline_during_multi_read_batch",
+      "invariants": [
+        "deadline halts remaining reads",
+        "no writes occur",
+        "completed prefix reads remain traceable"
+      ],
+      "target": "trajectory deadline"
+    },
+    {
+      "case_id": "r6-p3-04",
+      "family": "P3_BUDGET_DEADLINE",
+      "fault": "text_only_false_completion",
+      "invariants": [
+        "prose cannot close an open ticket",
+        "stop category is model_text_without_terminal",
+        "ticket remains open"
+      ],
+      "target": "terminal-state boundary"
+    },
+    {
+      "case_id": "r6-p4-01",
+      "family": "P4_STORE_IDEMPOTENCY",
+      "fault": "stale_revision_compare_and_swap",
+      "invariants": [
+        "revision conflict is raised or returned explicitly",
+        "state mutation rolls back",
+        "operation insert rolls back"
+      ],
+      "target": "store transaction"
+    },
+    {
+      "case_id": "r6-p4-02",
+      "family": "P4_STORE_IDEMPOTENCY",
+      "fault": "duplicate_idempotency_key",
+      "invariants": [
+        "second state change rolls back",
+        "only one operation remains",
+        "first committed state is preserved"
+      ],
+      "target": "store transaction"
+    },
+    {
+      "case_id": "r6-p4-03",
+      "family": "P4_STORE_IDEMPOTENCY",
+      "fault": "exact_idempotent_replay",
+      "invariants": [
+        "replay is explicitly identified",
+        "no duplicate effective write occurs",
+        "only one operation remains"
+      ],
+      "target": "write tool idempotency"
+    },
+    {
+      "case_id": "r6-p4-04",
+      "family": "P4_STORE_IDEMPOTENCY",
+      "fault": "unknown_prior_operation_retry",
+      "invariants": [
+        "blind retry is blocked",
+        "operation_outcome_unknown is explicit",
+        "no second effective mutation occurs"
+      ],
+      "target": "write safety boundary"
+    },
+    {
+      "case_id": "r6-p5-01",
+      "family": "P5_AUTHORIZATION_POLICY",
+      "fault": "unauthorised_requester",
+      "invariants": [
+        "requester_not_authorised is explicit",
+        "zero effective writes occur"
+      ],
+      "target": "write authorization"
+    },
+    {
+      "case_id": "r6-p5-02",
+      "family": "P5_AUTHORIZATION_POLICY",
+      "fault": "expired_approval",
+      "invariants": [
+        "approval_expired is explicit",
+        "zero effective writes occur"
+      ],
+      "target": "approval validity"
+    },
+    {
+      "case_id": "r6-p5-03",
+      "family": "P5_AUTHORIZATION_POLICY",
+      "fault": "subscription_ownership_conflict",
+      "invariants": [
+        "ownership_conflict is explicit",
+        "zero effective writes occur"
+      ],
+      "target": "record ownership control"
+    },
+    {
+      "case_id": "r6-p5-04",
+      "family": "P5_AUTHORIZATION_POLICY",
+      "fault": "cancellation_before_policy_minimum",
+      "invariants": [
+        "effective_date_invalid is explicit",
+        "invalid request does not mutate subscription"
+      ],
+      "target": "structured policy enforcement"
+    },
+    {
+      "case_id": "r6-p6-01",
+      "family": "P6_EVIDENCE_INTEGRITY",
+      "fault": "existing_trace_path",
+      "invariants": [
+        "existing evidence path is refused",
+        "prior trace bytes are not overwritten"
+      ],
+      "target": "evidence immutability"
+    },
+    {
+      "case_id": "r6-p6-02",
+      "family": "P6_EVIDENCE_INTEGRITY",
+      "fault": "provider_reasoning_in_memory",
+      "invariants": [
+        "provider continuation state can be replayed in memory",
+        "provider reasoning is absent from durable trace"
+      ],
+      "target": "trace privacy"
+    },
+    {
+      "case_id": "r6-p6-03",
+      "family": "P6_EVIDENCE_INTEGRITY",
+      "fault": "final_state_hash_verification",
+      "invariants": [
+        "run_finished final-state hash matches returned state",
+        "receipt can bind to the same final state"
+      ],
+      "target": "evidence integrity"
+    },
+    {
+      "case_id": "r6-p6-04",
+      "family": "P6_EVIDENCE_INTEGRITY",
+      "fault": "rejected_batch_trace",
+      "invariants": [
+        "rejection reason is durable",
+        "provider reasoning is not durable",
+        "no rejected-batch write is realized"
+      ],
+      "target": "sanitized fault evidence"
+    }
+  ],
+  "cases_per_family": 4,
+  "family_count": 6,
+  "live_model_calls": 0,
+  "provider_calls": 0,
+  "schema_version": "harbourdesk-r6-fault-program-v1",
+  "stage": "R6A"
+}
