@@ -1,0 +1,79 @@
+{
+  "frozen_at": "2026-10-07T12:00:00Z",
+  "tenants": [
+    {
+      "tenant_id": "tenant-hdb-164",
+      "display_name": "HarbourDesk Synthetic hdb-164",
+      "active": true
+    }
+  ],
+  "accounts": [
+    {
+      "account_id": "acct-hdb-164-a",
+      "tenant_id": "tenant-hdb-164",
+      "subscription_id": "sub-hdb-164-a",
+      "authorised_contacts": [
+        "owner-hdb-164@example.test"
+      ]
+    }
+  ],
+  "subscriptions": [
+    {
+      "subscription_id": "sub-hdb-164-a",
+      "account_id": "acct-hdb-164-a",
+      "plan_id": "team",
+      "status": "active",
+      "start_at": "2026-04-10T12:00:00Z",
+      "end_at": null,
+      "cancellation_effective_at": null,
+      "revision": 7
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-hdb-164-a",
+      "feature_id": "collaboration",
+      "source_subscription_revision": 6,
+      "enabled": false,
+      "revision": 5
+    }
+  ],
+  "tickets": [
+    {
+      "ticket_id": "ticket-hdb-164",
+      "tenant_id": "tenant-hdb-164",
+      "account_id": "acct-hdb-164-a",
+      "requesting_contact": "owner-hdb-164@example.test",
+      "initial_text": "Our collaboration access disappeared after the recent account change.",
+      "notes": [],
+      "status": "open",
+      "revision": 1,
+      "resolution_reason_code": null,
+      "evidence_document_ids": [],
+      "operation_ids": []
+    }
+  ],
+  "policies": [
+    {
+      "document_id": "policy-ticket-hdb-164-access-02",
+      "version": 2,
+      "valid_from": "2026-08-08T12:00:00Z",
+      "valid_to": null,
+      "authority": "HarbourDesk Operations",
+      "body": "Current access policy. Starter includes base_access. Team includes base_access, collaboration and exports. Business includes all Team features plus admin_controls. Entitlement reconciliation requires an authorised requester, an unexpired applicable approval, the current subscription revision and idempotent execution.",
+      "content_hash": "97c92e6c65536335696cca661b88905543ce5ad22ef1d9a1dd3fad6743ac8cf9"
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "approval-hdb-164-a",
+      "tenant_id": "tenant-hdb-164",
+      "account_id": "acct-hdb-164-a",
+      "permitted_action": "reconcile_entitlement",
+      "issued_at": "2026-10-05T12:00:00Z",
+      "expires_at": "2026-10-09T12:00:00Z",
+      "issuer_type": "system"
+    }
+  ],
+  "operations": []
+}

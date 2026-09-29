@@ -1,0 +1,75 @@
+{
+  "allowed_signals": [
+    "initial_operation_reference_count",
+    "first_attempt_realized_tool_count",
+    "first_attempt_tool_signature"
+  ],
+  "candidate_policies": [
+    {
+      "name": "opref_count",
+      "signals": [
+        "initial_operation_reference_count"
+      ]
+    },
+    {
+      "name": "first_tool_count",
+      "signals": [
+        "first_attempt_realized_tool_count"
+      ]
+    },
+    {
+      "name": "first_tool_signature",
+      "signals": [
+        "first_attempt_tool_signature"
+      ]
+    },
+    {
+      "name": "opref_plus_first_tool_count",
+      "signals": [
+        "initial_operation_reference_count",
+        "first_attempt_realized_tool_count"
+      ]
+    },
+    {
+      "name": "opref_plus_first_tool_signature",
+      "signals": [
+        "initial_operation_reference_count",
+        "first_attempt_tool_signature"
+      ]
+    }
+  ],
+  "case_count": 90,
+  "cross_validation": "leave_one_template_out",
+  "evidence_boundary": {
+    "external_provider_calls": 0,
+    "live_model_calls": 0,
+    "locked_cases_accessed": 0,
+    "private_expected_files_accessed": 0,
+    "runtime_mutations": 0,
+    "validation_cases_accessed": 0
+  },
+  "instances_per_template": 5,
+  "policy_learning": {
+    "baseline_max_model_calls": 8,
+    "bucket_cap_rule": "maximum observed attempt_count among passing training cases for the bucket",
+    "cap_8_bucket": "fallback",
+    "decision_point": "after_first_model_attempt",
+    "fallback_max_model_calls": 8,
+    "minimum_training_bucket_support": 10,
+    "zero_pass_training_bucket": "fallback"
+  },
+  "qualification": {
+    "minimum_diagnostic_token_reduction_fraction": 0.2,
+    "observed_pass_loss_count": 0,
+    "selection_order": [
+      "highest cross_validated diagnostic token reduction",
+      "fewest signal dimensions",
+      "lexicographic policy name"
+    ]
+  },
+  "r5_summary_sha256": "b9525bd704df83f66e6fd9a5083b48412b20882e574edb415d8bf17a237a12f7",
+  "r6b_commit": "e990ac34b8893bf59f52c5c02e0613ada0b066df",
+  "r7a_commit": "5fcb3ec2175d8b10c2708b3a45a7e1b4e7e2a56d",
+  "schema_version": "harbourdesk-r7b-policy-discovery-contract-v1",
+  "template_count": 18
+}

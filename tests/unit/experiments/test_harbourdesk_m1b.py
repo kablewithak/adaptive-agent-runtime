@@ -23,11 +23,14 @@ from adaptive_runtime.evaluation.expected import (
 )
 from adaptive_runtime.experiments.harbourdesk_m1b import (
     M1B_CASE_IDS,
+    M1B_IDENTITY,
     M1BCaseInput,
     M1BExperimentStatus,
     load_m1b_public_cases,
+    run_fixed_model_baseline_experiment,
     run_m1b_experiment,
 )
+from adaptive_runtime.runtime.harbourdesk_live import LiveRunBudget
 
 
 class FakeProvider:
@@ -200,3 +203,38 @@ def test_existing_evidence_directory_is_rejected_before_provider_calls(
         )
 
     assert provider.requests == []
+
+
+def test_explicit_budget_is_used_for_execution_and_recorded_configuration(
+    tmp_path: Path,
+) -> None:
+    inputs = _inputs()
+    provider = FakeProvider([_result_for_case(item, index) for index, item in enumerate(inputs, 1)])
+    evidence_dir = tmp_path / "custom-budget"
+    budget = LiveRunBudget(
+        max_model_calls=8,
+        max_tool_actions=10,
+        trajectory_deadline_seconds=300.0,
+        request_deadline_seconds=60.0,
+        max_completion_tokens=1536,
+    )
+
+    receipt = run_fixed_model_baseline_experiment(
+        inputs=inputs,
+        provider=provider,
+        profile=_profile(),
+        run_id="custom-budget-test",
+        evidence_dir=evidence_dir,
+        identity=M1B_IDENTITY,
+        budget=budget,
+    )
+
+    assert receipt.frozen_configuration.max_completion_tokens == 1536
+
+    manifest = json.loads((evidence_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["frozen_configuration"]["max_completion_tokens"] == 1536
+
+    first_trace_event = json.loads(
+        (evidence_dir / "hdm-001" / "trace.jsonl").read_text(encoding="utf-8").splitlines()[0]
+    )
+    assert first_trace_event["budget"]["max_completion_tokens"] == 1536

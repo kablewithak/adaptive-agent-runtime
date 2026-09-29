@@ -1,0 +1,103 @@
+{
+  "frozen_at": "2026-10-09T12:00:00Z",
+  "tenants": [
+    {
+      "tenant_id": "tenant-hdb-026",
+      "display_name": "HarbourDesk Synthetic hdb-026",
+      "active": true
+    }
+  ],
+  "accounts": [
+    {
+      "account_id": "acct-hdb-026-a",
+      "tenant_id": "tenant-hdb-026",
+      "subscription_id": "sub-hdb-026-a",
+      "authorised_contacts": [
+        "owner-hdb-026@example.test"
+      ]
+    }
+  ],
+  "subscriptions": [
+    {
+      "subscription_id": "sub-hdb-026-a",
+      "account_id": "acct-hdb-026-a",
+      "plan_id": "team",
+      "status": "active",
+      "start_at": "2026-04-12T12:00:00Z",
+      "end_at": null,
+      "cancellation_effective_at": null,
+      "revision": 11
+    }
+  ],
+  "entitlements": [
+    {
+      "account_id": "acct-hdb-026-a",
+      "feature_id": "exports",
+      "source_subscription_revision": 10,
+      "enabled": false,
+      "revision": 8
+    }
+  ],
+  "tickets": [
+    {
+      "ticket_id": "ticket-hdb-026",
+      "tenant_id": "tenant-hdb-026",
+      "account_id": "acct-hdb-026-a",
+      "requesting_contact": "owner-hdb-026@example.test",
+      "initial_text": "Exports are still unavailable. The last fix lost its response, so please try it again.",
+      "notes": [
+        "Prior operation outcome could not be confirmed."
+      ],
+      "status": "open",
+      "revision": 1,
+      "resolution_reason_code": null,
+      "evidence_document_ids": [],
+      "operation_ids": []
+    }
+  ],
+  "policies": [
+    {
+      "document_id": "policy-ticket-hdb-026-ops-01",
+      "version": 1,
+      "valid_from": "2026-04-12T12:00:00Z",
+      "valid_to": null,
+      "authority": "HarbourDesk Operations",
+      "body": "When a prior operation acknowledgement is missing, support must inspect the operation record before retrying. A committed operation must not be repeated. An unknown outcome must be escalated rather than duplicated.",
+      "content_hash": "cb957db5b2886ddc704569692cb17a43c7891e756244f54c62c7a3737ffaceed"
+    },
+    {
+      "document_id": "policy-ticket-hdb-026-access-02",
+      "version": 2,
+      "valid_from": "2026-08-10T12:00:00Z",
+      "valid_to": null,
+      "authority": "HarbourDesk Operations",
+      "body": "Current access policy. Starter includes base_access. Team includes base_access, collaboration and exports. Business includes all Team features plus admin_controls. Entitlement reconciliation requires an authorised requester, an unexpired applicable approval, the current subscription revision and idempotent execution.",
+      "content_hash": "97c92e6c65536335696cca661b88905543ce5ad22ef1d9a1dd3fad6743ac8cf9"
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "approval-hdb-026-a",
+      "tenant_id": "tenant-hdb-026",
+      "account_id": "acct-hdb-026-a",
+      "permitted_action": "reconcile_entitlement",
+      "issued_at": "2026-10-07T12:00:00Z",
+      "expires_at": "2026-10-11T12:00:00Z",
+      "issuer_type": "system"
+    }
+  ],
+  "operations": [
+    {
+      "operation_id": "op-hdb-026-prior",
+      "tenant_id": "tenant-hdb-026",
+      "account_id": "acct-hdb-026-a",
+      "action": "reconcile_entitlement",
+      "idempotency_key": "idem-hdb-026-prior",
+      "arguments_hash": "5013310241b1778c683b5852fdf5d0dce73b494336f98baa5ac9f567b295c741",
+      "status": "unknown",
+      "before_revision": null,
+      "after_revision": null,
+      "effective_write": false
+    }
+  ]
+}

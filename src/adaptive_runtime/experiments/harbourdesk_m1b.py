@@ -247,12 +247,14 @@ def run_fixed_model_baseline_experiment(
     run_id: str,
     evidence_dir: Path,
     identity: FixedBaselineIdentity,
+    budget: LiveRunBudget | None = None,
 ) -> M1BExperimentReceipt:
     _validate_profile(profile, identity)
     _validate_inputs(inputs, stage_label=identity.stage_label)
     _prepare_evidence_dir(evidence_dir, stage_label=identity.stage_label)
 
-    frozen = _frozen_configuration(profile, identity)
+    effective_budget = budget if budget is not None else _budget()
+    frozen = _frozen_configuration(profile, identity, effective_budget)
     manifest = M1BSuiteManifest(
         schema_version=identity.manifest_schema_version,
         run_id=run_id,
@@ -271,6 +273,7 @@ def run_fixed_model_baseline_experiment(
             suite_run_id=run_id,
             trace_path=case_dir / "trace.jsonl",
             identity=identity,
+            budget=effective_budget,
         )
         _write_json(case_dir / "receipt.json", receipt)
         receipts.append(receipt)
@@ -364,6 +367,7 @@ def _prepare_evidence_dir(path: Path, *, stage_label: str) -> None:
 def _frozen_configuration(
     profile: EndpointProfile,
     identity: FixedBaselineIdentity,
+    budget: LiveRunBudget,
 ) -> M1BFrozenConfiguration:
     return M1BFrozenConfiguration(
         schema_version=identity.frozen_configuration_schema_version,
@@ -371,11 +375,11 @@ def _frozen_configuration(
         model_id=profile.model_id,
         protocol=profile.protocol,
         thinking=profile.thinking_control,
-        max_model_calls=M1B_MAX_MODEL_CALLS,
-        max_tool_actions=M1B_MAX_TOOL_ACTIONS,
-        trajectory_deadline_seconds=M1B_TRAJECTORY_DEADLINE_SECONDS,
-        request_deadline_seconds=M1B_REQUEST_DEADLINE_SECONDS,
-        max_completion_tokens=M1B_MAX_COMPLETION_TOKENS,
+        max_model_calls=budget.max_model_calls,
+        max_tool_actions=budget.max_tool_actions,
+        trajectory_deadline_seconds=budget.trajectory_deadline_seconds,
+        request_deadline_seconds=budget.request_deadline_seconds,
+        max_completion_tokens=budget.max_completion_tokens,
         case_order=M1B_CASE_IDS,
     )
 
@@ -410,6 +414,7 @@ def _run_case(
     suite_run_id: str,
     trace_path: Path,
     identity: FixedBaselineIdentity,
+    budget: LiveRunBudget,
 ) -> M1BCaseReceipt:
     case = item.case
     case_run_id = f"{suite_run_id}-{case.case_id}"
@@ -427,7 +432,7 @@ def _run_case(
             environment=environment,
             run_id=case_run_id,
             model_profile=_model_profile(profile, identity),
-            budget=_budget(),
+            budget=budget,
             trace_sink=JsonlTraceSink(trace_path),
         )
 

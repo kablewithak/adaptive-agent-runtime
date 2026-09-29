@@ -1,0 +1,41 @@
+{
+  "baseline_run_id": "r5-glm52-development-reference-20260928-01",
+  "baseline_screen_family_pass_counts": {
+    "F1": 6,
+    "F2": 3,
+    "F3": 5,
+    "F4": 1,
+    "F5": 0,
+    "F6": 1
+  },
+  "baseline_screen_pass_count": 16,
+  "baseline_summary_sha256": "b9525bd704df83f66e6fd9a5083b48412b20882e574edb415d8bf17a237a12f7",
+  "budget": {
+    "max_completion_tokens": 1536,
+    "max_model_calls": 8,
+    "max_tool_actions": 10,
+    "request_deadline_seconds": 60.0,
+    "trajectory_deadline_seconds": 300.0
+  },
+  "challenger_model_id": "glm-5.1",
+  "challenger_profile_name": "primary-openai",
+  "promotion_rule": {
+    "deterministic_control_violation_count_must_equal": 0,
+    "hard_families": [
+      "F4",
+      "F5",
+      "F6"
+    ],
+    "hard_family_min_passes": 6,
+    "hard_path_min_overall_passes": 16,
+    "overall_min_passes": 20,
+    "provider_error_count_must_equal": 0,
+    "usage_complete_required": true,
+    "writes_from_multi_tool_batches_must_equal": 0
+  },
+  "qualification_receipt_sha256": "1bf2f2e29400e4bdd8767a25aa546ec4ac78e1518f08f7f64fc997f6291bdc4a",
+  "schema_version": "harbourdesk-r5ec-challenger-screen-contract-v1",
+  "screen_case_count": 36,
+  "screen_manifest_sha256": "8103c9be8a4698c46369cd1d4f083097c3473ef38ec3c3f8a54d983c1ec94b90",
+  "screen_template_count": 18
+}
