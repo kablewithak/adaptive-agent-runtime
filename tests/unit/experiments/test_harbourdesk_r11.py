@@ -3,6 +3,7 @@ from __future__ import annotations
 from adaptive_runtime.experiments.harbourdesk_r11 import (
     R11_PARENT_R10_COMMIT,
     R11_R10_BUNDLE_SHA256,
+    _validate_r10,
 )
 
 
@@ -21,3 +22,36 @@ def test_r11_does_not_use_locked_or_private_source_roots() -> None:
 
     assert "evaluation_private" not in source
     assert "runs/locked" not in source
+
+
+def test_r11_accepts_authoritative_r10_no_candidate_verdict_shape() -> None:
+    summary: dict[str, object] = {
+        "status": "PASS",
+        "candidate_commit": R11_PARENT_R10_COMMIT,
+        "known_hashes_verified": True,
+        "evidence_file_count": 312,
+        "evidence_total_bytes": 2153217,
+        "integrity_failures": [],
+    }
+    verdict: dict[str, object] = {
+        "final_verdict": "INCONCLUSIVE",
+        "development_disposition": "NO_ADAPTIVE_CANDIDATE_ADMITTED",
+        "adaptive_runtime_promotion": "REJECTED",
+        "locked_paired_evaluation": "NOT_RUN",
+        "locked_cases_accessed_for_r7_or_closeout": 0,
+        "deterministic_fault_program": "PASS",
+        "evidence_closeout": "PASS",
+        "reason_codes": [
+            "NO_QUALIFIED_ADAPTIVE_CANDIDATE",
+            "LOCKED_PAIRED_COMPARISON_NOT_EXECUTED",
+        ],
+    }
+    failures: list[str] = []
+
+    _validate_r10(
+        summary=summary,
+        verdict=verdict,
+        failures=failures,
+    )
+
+    assert failures == []

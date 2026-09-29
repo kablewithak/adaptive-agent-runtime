@@ -434,7 +434,11 @@ def _validate_r10(
         and verdict.get("locked_cases_accessed_for_r7_or_closeout") == 0
         and verdict.get("deterministic_fault_program") == "PASS"
         and verdict.get("evidence_closeout") == "PASS"
-        and verdict.get("r7b_decision") == "NO_POLICY_QUALIFIED"
+        and verdict.get("reason_codes")
+        == [
+            "NO_QUALIFIED_ADAPTIVE_CANDIDATE",
+            "LOCKED_PAIRED_COMPARISON_NOT_EXECUTED",
+        ]
     ):
         failures.append("r10_final_verdict_state_mismatch")
 
