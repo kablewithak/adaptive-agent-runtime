@@ -1,0 +1,42 @@
+{
+  "authoritative_r10": {
+    "adaptive_runtime_promotion": "REJECTED",
+    "bundle_sha256": "bfc2b8304481f8c3b61331f0e273343cc0d3f2eef054f2d3120f9ff26a02a300",
+    "development_disposition": "NO_ADAPTIVE_CANDIDATE_ADMITTED",
+    "final_verdict": "INCONCLUSIVE",
+    "locked_cases_accessed": 0,
+    "locked_paired_evaluation": "NOT_RUN",
+    "run_id": "r10-no-candidate-closeout-20260929-01",
+    "status": "PASS"
+  },
+  "parent_r10_commit": "4bd1b8c36202611d5503abb8536cc8e138056ce8",
+  "prohibited_public_claims": [
+    "adaptive runtime passed the north star",
+    "20 percent efficiency improvement was demonstrated",
+    "locked benchmark quality was measured",
+    "GLM-5.2 universally outperforms GLM-5.1",
+    "24 deterministic faults prove complete production safety"
+  ],
+  "publication_scope": {
+    "artifact_hashes": true,
+    "derived_metrics": true,
+    "development_case_payloads": false,
+    "locked_cases": false,
+    "methodology": true,
+    "private_expected_outcomes": false,
+    "raw_traces": false,
+    "reproducibility_metadata": true,
+    "svg_charts": true,
+    "validation_cases": false
+  },
+  "release_format": "hugging-face-compatible-results-artifact",
+  "required_public_claims": [
+    "fixed reference development result is 43/90",
+    "GLM-5.1 challenger decision is DO_NOT_PROMOTE",
+    "deterministic fault programme is 24/24 PASS",
+    "R7B admitted no adaptive policy candidate",
+    "final R4-contract verdict is INCONCLUSIVE",
+    "locked paired evaluation was not run"
+  ],
+  "schema_version": "harbourdesk-r11-public-release-contract-v1"
+}
