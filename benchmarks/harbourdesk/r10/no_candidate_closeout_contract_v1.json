@@ -1,0 +1,33 @@
+{
+  "bundle": {
+    "deterministic_zip": true,
+    "include_locked_cases": false,
+    "include_repo_contracts": true,
+    "include_sanitized_authoritative_run_evidence": true,
+    "include_validation_cases": false
+  },
+  "closeout": {
+    "adaptive_runtime_promotion": "REJECTED",
+    "development_disposition": "NO_ADAPTIVE_CANDIDATE_ADMITTED",
+    "final_north_star_verdict": "INCONCLUSIVE",
+    "locked_paired_evaluation": "NOT_RUN",
+    "reason_codes": [
+      "NO_QUALIFIED_ADAPTIVE_CANDIDATE",
+      "LOCKED_PAIRED_COMPARISON_NOT_EXECUTED"
+    ]
+  },
+  "frozen_r4_interpretation": "R4 requires a selected fixed reference and frozen candidate on the same 60 locked cases. With no admitted candidate, required final paired evidence does not exist. The R4 INCONCLUSIVE branch therefore applies; no locked cases are consumed merely to force a terminal PASS or FAIL.",
+  "locked_evidence_policy": {
+    "locked_cases_accessed_by_r7": 0,
+    "locked_cases_may_be_opened_for_closeout": false,
+    "validation_cases_accessed_by_r7": 0
+  },
+  "parent_r7b_commit": "644c27e757760d1ab7ced0f27b7297377670a454",
+  "r4_acceptance_commit": "0c741192e52916de2330462b9c95bbd31e004924",
+  "schema_version": "harbourdesk-r10-no-candidate-closeout-contract-v1",
+  "trigger": {
+    "r7b_decision": "NO_POLICY_QUALIFIED",
+    "r7b_status": "PASS",
+    "selected_policy_required": false
+  }
+}
