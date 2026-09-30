@@ -1,0 +1,53 @@
+{
+  "schema_version": "harbourdesk-space-public-evidence-manifest-v1",
+  "source_release": {
+    "run_id": "r11-public-release-20260929-02",
+    "release_zip_sha256": "1ced6ea0cbec2039a41b1bd4974fbc2f400b7bc936ad3b05cfc6788fbd3a7449",
+    "public_file_count": 9,
+    "sha256sums_entries": {
+      "charts/adaptation_screen.svg": "3c9dd699135c9a4570dafea93cff975ce6d9aeca696fcdc078a5f7702d8b970c",
+      "charts/challenger_screen.svg": "5ef74be2c5f4eeac5aabfd4679c0ae8b0def72952579543096bbc0b640b9e976",
+      "charts/deterministic_faults.svg": "c6951f75c804bf273f779b860c75587f1e6c16bd8ffd4967f0dcdf9df6b4f5e8",
+      "charts/fixed_reference_development.svg": "23452a2132be27541cca620e5237733b4a214c60ad8d237ba68db63fa5f126d4",
+      "provenance.json": "2955ede8138f40e32cf8fb5f21da3cef75c88eee136dbc25036b692709d2d58e",
+      "PUBLICATION_NOTES.md": "d34c0133ecefa3d3ccd34438e306d5521a42e21d7e977df4a3b7c7caef97e0a8",
+      "README.md": "b9681165e19e8f0f354542cfa702f3b21d5d0431b428827d77d115f5494761c2",
+      "results.json": "afbb56a7a399a71dc30cb82a57d831b850aeb35894fd76c03b975470758736da"
+    }
+  },
+  "checked_in_public_sources": {
+    "results.json": "afbb56a7a399a71dc30cb82a57d831b850aeb35894fd76c03b975470758736da",
+    "provenance.json": "2955ede8138f40e32cf8fb5f21da3cef75c88eee136dbc25036b692709d2d58e"
+  },
+  "methodology_constants": {
+    "efficiency_target_reduction": 0.2,
+    "source": "docs/checkpoints/2026-09-28-r4-benchmark-and-final-acceptance-contract.md",
+    "source_section": "Efficiency gate"
+  },
+  "display_metric_sources": {
+    "fixed_reference_development": "results.json:fixed_reference_development_passes / fixed_reference_development_cases",
+    "challenger_screen": "results.json:challenger_screen_passes / challenger_screen_cases",
+    "challenger_baseline": "results.json:challenger_screen_baseline_passes / challenger_screen_cases",
+    "deterministic_faults": "results.json:deterministic_fault_passes / deterministic_fault_cases",
+    "theoretical_saving": "results.json:r7a_failure_only_oracle_reduction",
+    "required_target": "manifest:methodology_constants.efficiency_target_reduction",
+    "practical_saving": "results.json:r7b_best_nontrivial_policy_reduction",
+    "practical_regressions": "results.json:r7b_best_nontrivial_policy_observed_pass_loss",
+    "final_verdict": "results.json:final_verdict",
+    "adaptive_decision": "results.json:adaptive_runtime_promotion",
+    "locked_cases_accessed": "results.json:locked_cases_accessed"
+  },
+  "non_claims": [
+    "The adaptive runtime did not pass the project north star.",
+    "A 20 percent final efficiency improvement was not demonstrated.",
+    "Locked-set candidate quality was not measured.",
+    "The challenger screen is not a universal model ranking.",
+    "The 24 deterministic fault cases do not establish complete production safety.",
+    "The 43.8 percent figure is theoretical development headroom, not an achieved saving.",
+    "The 1.7 percent figure is a development diagnostic, not a final efficiency result."
+  ],
+  "forbidden_source_roots": [
+    "evaluation_private/",
+    "runs/"
+  ]
+}
