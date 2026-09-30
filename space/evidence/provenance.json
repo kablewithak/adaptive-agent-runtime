@@ -1,0 +1,12 @@
+{
+  "schema_version": "harbourdesk-r11-provenance-v1",
+  "release_commit": "2a0c0977a39dffc7ed75be8f3915ef129649875f",
+  "parent_r10_commit": "4bd1b8c36202611d5503abb8536cc8e138056ce8",
+  "r10_run_id": "r10-no-candidate-closeout-20260929-01",
+  "r10_bundle_sha256": "bfc2b8304481f8c3b61331f0e273343cc0d3f2eef054f2d3120f9ff26a02a300",
+  "r6b_manifest_sha256": "c6fa27fffc4c2b37b2ad313220d93c0a1a0fb6514bfd2f671c20181ea247e404",
+  "r6b_summary_sha256": "f3887992d1ea8ccc1e68d066a727da5a82c252d513ff4521d154c1e5ce8ea162",
+  "r7b_summary_sha256": "e9f5939c46e85c6848c2350407854669ffd2f4ffe6e9b6d02b7cc66fa0cc2ada",
+  "source_evidence_file_count": 312,
+  "source_evidence_total_bytes": 2153217
+}
