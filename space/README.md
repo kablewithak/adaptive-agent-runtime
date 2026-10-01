@@ -1,32 +1,34 @@
-# React + TypeScript + Vite
+---
+title: HarbourDesk AI Reliability
+emoji: 🧭
+colorFrom: blue
+colorTo: gray
+sdk: static
+pinned: false
+short_description: "HarbourDesk: evidence-first AI reliability case study."
+app_build_command: npm run build
+app_file: dist/index.html
+---
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+# HarbourDesk AI Reliability Study
 
-Currently, two official plugins are available:
+An evidence-first case study examining whether adaptive runtime complexity can reduce AI processing without sacrificing reliability.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The public Space is generated from the tracked `space/` subtree of the GitHub repository and publishes only the approved sanitized evidence surface.
 
-## React Compiler
+## Result
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Adaptive runtime promotion: **REJECTED**
+- Formal research verdict: **INCONCLUSIVE**
+- Locked final cases consumed: **0**
+- Deterministic fault programme: **24 / 24 PASS**
 
-## Expanding the Oxlint configuration
+The published efficiency figures are development diagnostics, not claims of demonstrated final efficiency improvement.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Source and evidence
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+The implementation, methodology, evidence boundary, and sanitized result artifacts are maintained in:
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+`kablewithak/adaptive-agent-runtime`
+
+The Space intentionally excludes raw traces, private expected outcomes, validation payloads, locked-case payloads, and private evaluation material.
