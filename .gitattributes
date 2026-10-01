@@ -1,0 +1,4 @@
+# Frozen R11 evidence artifacts are hash-bound byte sequences.
+# Git must not normalize their line endings.
+space/evidence/results.json -text
+space/evidence/provenance.json -text
