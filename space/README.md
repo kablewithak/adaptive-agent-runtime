@@ -6,15 +6,14 @@ colorTo: gray
 sdk: static
 pinned: false
 short_description: "HarbourDesk: evidence-first AI reliability case study."
-app_build_command: npm run build
-app_file: dist/index.html
+app_file: index.html
 ---
 
 # HarbourDesk AI Reliability Study
 
 An evidence-first case study examining whether adaptive runtime complexity can reduce AI processing without sacrificing reliability.
 
-The public Space is generated from the tracked `space/` subtree of the GitHub repository and publishes only the approved sanitized evidence surface.
+The public Space is built and qualified in GitHub Actions, then published as prebuilt static assets. Hugging Face serves the resulting `index.html` directly; no Hugging Face build job is required.
 
 ## Result
 

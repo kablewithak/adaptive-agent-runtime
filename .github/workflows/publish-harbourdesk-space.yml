@@ -65,37 +65,36 @@ jobs:
         working-directory: space
         run: npm run build
 
-      - name: Prepare tracked publish tree
+      - name: Prepare prebuilt static publish tree
         shell: bash
         run: |
           set -euo pipefail
-
           PUBLISH_DIR="$RUNNER_TEMP/harbourdesk-space"
+          rm -rf "$PUBLISH_DIR"
           mkdir -p "$PUBLISH_DIR"
 
-          git archive --format=tar HEAD:space | tar -xf - -C "$PUBLISH_DIR"
+          cp -R space/dist/. "$PUBLISH_DIR/"
+          cp space/README.md "$PUBLISH_DIR/README.md"
 
+          test -f "$PUBLISH_DIR/index.html"
+          test -d "$PUBLISH_DIR/assets"
           test -f "$PUBLISH_DIR/README.md"
-          test -f "$PUBLISH_DIR/package.json"
-          test -f "$PUBLISH_DIR/package-lock.json"
-          test -f "$PUBLISH_DIR/src/App.tsx"
-          test -f "$PUBLISH_DIR/evidence/results.json"
-          test -f "$PUBLISH_DIR/evidence/provenance.json"
 
+          test ! -e "$PUBLISH_DIR/src"
           test ! -e "$PUBLISH_DIR/node_modules"
-          test ! -e "$PUBLISH_DIR/dist"
+          test ! -e "$PUBLISH_DIR/package.json"
+          test ! -e "$PUBLISH_DIR/package-lock.json"
 
-          if find "$PUBLISH_DIR" -type f \(             -path "*/evaluation_private/*" -o             -path "*/runs/*"           \) | grep -q .; then
-            echo "Forbidden private experiment material found in publish tree."
+          if find "$PUBLISH_DIR" -type f \( -name "*.map" -o -name ".env*" -o -path "*/evaluation_private/*" -o -path "*/runs/*" \) | grep -q .; then
+            echo "Forbidden or unnecessary material found in publish tree."
             exit 1
           fi
 
-          echo "Tracked publish tree:"
+          echo "Prebuilt static publish tree:"
           find "$PUBLISH_DIR" -type f -printf '%P\n' | sort
 
-      - name: Publish to Hugging Face Space with OIDC
+      - name: Publish prebuilt static site to Hugging Face with OIDC
         shell: bash
         run: |
           set -euo pipefail
-
-          hf upload             "$HF_REPO_ID"             "$RUNNER_TEMP/harbourdesk-space"             .             --repo-type space             --delete "*"             --commit-message "Deploy GitHub ${GITHUB_SHA::7}"
+          hf upload             "$HF_REPO_ID"             "$RUNNER_TEMP/harbourdesk-space"             .             --repo-type space             --delete "*"             --commit-message "Deploy prebuilt GitHub ${GITHUB_SHA::7}"
